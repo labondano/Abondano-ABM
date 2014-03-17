@@ -107,7 +107,7 @@ to setup
    set size 0.4
    set color blue
    set dominance random-float 1
-   set male-energy 50
+   set male-energy 100
   ]
     let i 1
   foreach sort-on [dominance] males [
@@ -127,7 +127,7 @@ to setup
     [ set shape "bird side"
       set size 0.3
       set color orange
-      set female-energy 50
+      set female-energy 100
       setxy random-xcor random-ycor ;; females are not constrained to territories initially. They are wondering around until they get to establish in a male's territory.
       ifelse ((count trees-here / (count females-here + count males-here)) >= female-min-resources) and any? males-here
         [set female-happy? true]
@@ -146,7 +146,7 @@ to setup
     ask patches [
       set number-males count males-here
       set number-females count females-here
-      ifelse number-males != 0
+      ifelse number-males != 0 and number-females != 0
       [set sex-ratio number-females / number-males]
       [set sex-ratio 0]  
       ]
@@ -177,6 +177,8 @@ to go
   infants-move
   tick
   do-plot1
+  do-plot2
+  do-plot3
 end
 
 to check-variables
@@ -353,11 +355,6 @@ to infants-move
   ;; if infant dies [mother leaves territory and seeks new territory females-seek]
 end
 
-to disperse
-  ;; if males, have to disperse to a new territory, 
-  ;;if females [females-seek]
-end
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -366,20 +363,55 @@ end
 
 to do-plot1
   set-current-plot "mono-vs-poly" ;; show how many monogamus territories vs. how many polygynous territories
-  set-current-plot-pen "average-trees"
-  let trees-available (count trees with [color = red] / (x-num-territories * y-num-territories))
-  plotxy ticks trees-available
-  set-current-plot-pen "mono-patches"
-  let mono-patches count patches with [number-females = 1]
+  ;set-current-plot-pen "average-trees"
+  ;let trees-available (count trees with [color = red] / (x-num-territories * y-num-territories))
+  ;plotxy ticks trees-available
+  set-current-plot-pen "%-mono-patches"
+  let mono-patches (count patches with [number-females = 1] / count patches with [occupied? = true] )  * 100
   plotxy ticks mono-patches
-  set-current-plot-pen "poly-patches"
-  let poly-patches count patches with [number-females > 1]
+  set-current-plot-pen "%-poly-patches"
+  let poly-patches (count patches with [number-females > 1] / count patches with [occupied? = true] ) * 100
   plotxy ticks poly-patches
 end
 
 
 to do-plot2
+  set-current-plot "resources for females" ;; show how many monogamus territories vs. how many polygynous territories
+  set-current-plot-pen "trees-per-female"
+  ifelse count females != 0 
+  [let trees-per-female (count trees with [color = red] / count females)
+     plotxy ticks trees-per-female
+     ]
+  [ user-message (word "All females died. "
+                       "Either \n"
+                       "1. Decrease number of females, \n"
+                       "2. increase number of trees, \n"
+                       "3. increase regeneration-time, or \n"
+                       "4. reduce the female-min-resources. \n"
+                       "The model has stopped.")
+    stop
+    ]
+  set-current-plot-pen "mono-groups"
+  let mono-patches count patches with [number-females = 1]
+  plotxy ticks mono-patches
+  set-current-plot-pen "poly-groups"
+  let poly-patches count patches with [number-females > 1] 
+  plotxy ticks poly-patches
 end
+
+
+to do-plot3
+  set-current-plot "sex ratio of poly-groups" ;; show how many monogamus territories vs. how many polygynous territories
+  set-current-plot-pen "trees-per-individual"
+  let trees-per-individual (count trees with [color = red] / count turtles)
+  plotxy ticks trees-per-individual
+  set-current-plot-pen "mean-sex-ratio"
+  ifelse count patches with [number-females > 1] != 0
+  [let mean-sex-ratio mean [sex-ratio] of patches with [number-females > 1] 
+  plotxy ticks mean-sex-ratio]
+  [ plotxy ticks 0]
+end
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 395
@@ -434,7 +466,7 @@ initial-trees
 initial-trees
 0
 500
-264
+100
 1
 1
 NIL
@@ -479,7 +511,7 @@ regeneration-time
 regeneration-time
 0
 100
-30
+0
 1
 1
 NIL
@@ -509,7 +541,7 @@ initial-females
 initial-females
 0
 100
-42
+56
 1
 1
 NIL
@@ -578,7 +610,7 @@ female-min-resources
 female-min-resources
 0
 5
-5
+1
 0.5
 1
 NIL
@@ -593,7 +625,7 @@ male-min-resources
 male-min-resources
 0
 5
-4
+1
 0.2
 1
 NIL
@@ -626,24 +658,73 @@ count trees with [color = red]
 11
 
 PLOT
-831
-82
-1132
-232
+832
+85
+1133
+235
 mono-vs-poly
 ticks
-number of patches
+percent
 0.0
 200.0
 0.0
-25.0
+100.0
 true
 true
 "" ""
 PENS
-"average-trees" 1.0 1 -13840069 true "" ""
-"poly-patches" 1.0 0 -14730904 true "" ""
-"mono-patches" 1.0 0 -5298144 true "" ""
+"%-poly-patches" 1.0 0 -14730904 true "" ""
+"%-mono-patches" 1.0 0 -5298144 true "" ""
+
+MONITOR
+942
+28
+1052
+73
+% monogamous
+(count patches with [number-females = 1] / count patches with [occupied? = true]) * 100
+17
+1
+11
+
+PLOT
+834
+245
+1135
+395
+resources for females
+ticks
+count
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"mono-groups" 1.0 0 -5298144 true "" ""
+"poly-groups" 1.0 0 -13345367 true "" ""
+"trees-per-female" 1.0 0 -12087248 true "" ""
+
+PLOT
+834
+399
+1137
+549
+sex ratio of poly-groups
+ticks
+count
+0.0
+10.0
+0.0
+5.0
+true
+true
+"" ""
+PENS
+"trees-per-individual" 1.0 0 -12087248 true "" ""
+"mean-sex-ratio" 1.0 0 -12572331 true "" ""
 
 @#$#@#$#@
 ## WHAT IS IT?
