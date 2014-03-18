@@ -1,0 +1,644 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>LA- Digital journal markdown</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h4>Laura Abondano</h4>
+<h4>AGENT-BASED SIMULATION MODELING IN EVOLUTIONARY ANTHROPOLOGY</h4>
+<h1>DIGITAL JOURNAL</h1>
+<hr />
+<h3>Jan 21, 2014 - Homework Assignment 1 - Exploring Cellular Automata</h3>
+<h4>I. 1D Cellular Automata</h4>
+<ol>
+<li>
+Can you see any patterns or categories in different types of behavior that are emerging? Describe these patterns. 
+<ul>
+<li>Repetitive, geometric patterns</li>
+</ul>
+</li>
+<li>
+<p>Pattern moves diagonally, vertically or horizontally, but in a straight line. No twirls or curves. </p>
+</li>
+<li>
+<p>Yay! Got it on the 1st try: Rule #110. Did it looking at the samples in the worksheet, that way I figured out which rules resulted on the next pixel being ON and which ones resulted in the next pixel being OFF. </p>
+</li>
+</ol>
+<p>This is what is known as a Wolfram's class 4 behavior which is nor completely random nor completely repetitive. </p>
+<ol>
+<li>I found out that if you have the completely opposite pattern, if you just switch the ONs to OFFs and vice versa, you wonât get the inverse pattern.</li>
+<li>If you make the screen large enough, the pattern will continue repeating vertically.</li>
+<li>There is more than one combination of rules that can result in the same pattern. </li>
+</ol>
+<p>For the first image I found that combinations #165, #167 (table below) and #181 give the same pattern. This is because the 001 and 100 rules do not affect the outcome pattern because this combination of pixels does not appear on the screen.
+For the second image. Also got this one on the first try âº. Combination #99.
+Third image. Also got this one on the first try âº. Combination #193.
+For the images in question 3 I started doing it randomly because I couldnât really see the pixels in the worksheet, but then I realized I could zoom in the PDF. After I realized this, I simply zoomed in the images and figured out what the next generation outcome would be  from previous cells, and with this a figured out the combination of rules for each pattern. Once I realized that I could zoom in it was pretty easy and got the patterns on the first try. </p>
+<ol>
+<li>Rule #30 sort of shows a similar pattern to the molluscs in the image. 
+This pattern is known as a Wolframâs class 3 behavior which shows that a simple input pattern can result in what seems to be a random outcome. However, I canât really see the difference between class 3 and class 4, because both seem to be not totally random but not totally repetitive. Rule #30 and rule #110 (question 1) look pretty similar to me, so I donât understand why they are considered as different class types. </li>
+</ol>
+<h4>II. 2D Cellular Automata</h4>
+<ol>
+<li>Does the run eventually reach a steady state? If so, what âstill lifeâ and âoscillatorâ shapes are formed? Repeat this process several times. Are any âglidersâ or other spaceships formed?
+Yes. On the 1st random setup the run reached a steady state after 1271 generations/ticks.
+The oscillators created here are all of the type. During this run there were several gliders and other spaceships, but after it reached a steady state the spaceships disappeared. </li>
+</ol>
+<p>The spaceships in the âGunsâ folder shows some glider-guns that generate gliders from four different corners and then these guns merge to create a spaceship that glides towards the right of the screen. </p>
+<p>The golly-ticker in the âGunsâ folder is fun too. Guns at the right create gliders that start moving left towards a âstaticâ cluster while creating the word GOLLY. When the word GOLLY reaches the âstaticâ cluster on the left, the letter starts disappearing. </p>
+<p>The puffer-train begins with just a few gliders that then it start making new gliders that spread out towards the right of the screen, and at the end of it when it stabilizes is a âtrainâ made up of blocks, beehives, boats and blinkers. The starting cells are like a spaceship that keep going right creating more and more gliders (glider-gun) which in turn make the rest of the âtrainâ (which looks more like a sword). </p>
+<hr />
+<h3>Jan 29, 2014 - Homework Assignment 2 â Beginning with NetLogo</h3>
+<p>Zombies apocalypse!!!</p>
+<p>Challenges and what I learned doing the zombie apocalypse model: </p>
+<ol>
+<li>If your world is too big, you can change the patch size in the settings button so you can visualize the entire world and not only a section of it. However, it is easier to try your model in a world with smaller dimensions because it works faster. I did this model with a smaller world and then made it 201 X 201. The problem was that when I made it larger, the agents looked really really tiny so I increased the size of the agents so I could visualize them. </li>
+<li>Order counts. NetLogo works in the order you give the commands, so it is really important to be careful with the order you type things so the model does what you want it to do. </li>
+<li>When you create new agents, you have to assign a singular and plural name for it. For example, to breed humans I types âbreed [humans human]â. This makes a difference later in the code, and you have to be careful whether you are using the plural or singular term. When you refer to the singular term, you have to tell the model to which specific agent you are referring (e.g. âhuman 127â).</li>
+<li>
+<p>In the âto goâ setting you specify what you want your agents to do. To do this you type âask agentâ and then you give a function that you code afterwards. On that new code there is no need to write âask agentâ again because it would be a duplication of the process. For example, I was initially writing the following:</p>
+<pre><code>to go
+ask zombies [zombies-chase]
+end
+</code></pre>
+
+</li>
+</ol>
+<p>and then I would ask zombies again in the zombies-chase code:</p>
+<pre><code>to zombies-chase
+ask zombies
+[
+ifelse any? humans in-radius zombie-vision-radius 
+[
+  set heading (towards min-one-of humans [distance myself])
+  fd zombie-speed
+  ]
+[rt random 360
+ fd zombie-speed]
+]
+end
+</code></pre>
+
+<p>Then I realized that I donât have to write the âask zombiesâ inside the âto zombies-chaseâ command (highlighted in yellow), since I already specified above in the âto goâ section, that the zombies-chase command is specific for the zombies breed. This makes the model go way slower since itâs making the code run twice every time since you are asking zombies to do this twice. 
+5.	When using the patch-here command, I had to write â-onâ after the agent so it worked. For example: Human-on patch-here. Didnât know that I had to add the â-onâ. 
+6.	As you increase the number of agents (initial number or the number that is created by the model afterwards), the model starts working slower. Donât know how to fix thisâ¦ (other than moving the speed slider). 
+7.	I learned how to make new shapesâ¦ pretty cool! Zombies look like zombies, people look like people âº
+8.	On my zombie apocalypse model, humans always survive!!! This is because I donât have anything that kills humans (other than zombies), as opposed to zombies who die when they havenât eaten any brains after a number of ticks. 
+9.	It is very useful to change colors to see new individuals that are created by the model, otherwise it would be hard to tell whether the model is actually doing what Iâm telling it to do or not. For example, in my model I had zombies red and humans green, but when a human turned into a zombie, instead of being red, it was orange. This allowed me to see easily when new agents were created by the model and keep track of their settings to check whether they died after x number of ticks or not. 
+10.	Thereâs a bunch of websites that are really helpful, as well as the built-in model for zombies on NetLogo. Many people are interested in zombiesâ¦ </p>
+<hr />
+<h3>Feb 5, 2014 - Working with the ODD Protocol</h3>
+<p>I found quite challenging trying to write up the ODD protocol for both the Pepper &amp; Smuts (2000) and for my own project. It was hard because I thought it was very repetitive, specially in the Pepper and Smuts example, there were many things that I wrote on the state variables of the entities that I felt like I had to repeat again on the Process overview and scheduling, and again on the initialization section. </p>
+<p>Also, I used the  example of an ODD in the paper from Grimm et al. 2006 to help me understand the concepts, or what I was supposed to include in each section. However, on this example there were somethings that I found not to be consistent with the ODD protocol, or that were overly simplistic and did not explain the model fully. For example, I thought that the Process overview and scheduling from that example didn't fully explain all the procedural steps that were supposed to be on the model. When writing my process overview for the Pepper and Smuts model I thought mine was way too long compared with the example from Grimm et al. (2006), so I don't know whether on an actual paper you are supposed to keep it short, or leave it as detailed as possible and maybe include it in the supplementary material. </p>
+<p>The hardest section of the assignment was definitely trying to write up my own model, which at this point I believe it doesn't really make much sense. I don't know whether it is because I am trying to include too many variables or whether I still haven't figured out the connections between variables and I am making things too complicated! I keep thinking on trying to make the model simpler, taking some of the variables out, for example, genetic structure of the group, or a genetic signal to determine whether relatedness influences the dispersal patterns in this species... but I don't know whether this is going to mess up things since I believe it is an important element on the model. I also think that maybe I am trying to explain an entire species' social behavior, and maybe I should be more specific and focus on only one thing... but the problem is I think all of the variables are somehow interrelated and should all be included in the model. </p>
+<p>At the end of this task... I thought that I should've come up with something simpler for the homework, for example some phenomenon that has already been modelled but not exactly put into ODD protocol words. I thought of working with <strong>fission-fusion</strong> dynamics with the spider monkeys, and also including Pitheciines... I think uakaris are really cool and it would be nice to try and see the differences in fission-fusion dynamics between spider, uakaris, bearded sakis... and why not, chimpanzees. I might work on this for the final project instead... if the <strong>pair-bonding stability</strong> project is definitely not viable. </p>
+<hr />
+<h3>Feb 10, 2014 - Monkey apocalypse reloaded - zombies moving across barriers are driving me insane!!!</h3>
+<p>I've been working over the weekend trying to modify the zombie apocalypse model. The hardest/most challenging part has definitely been trying to get the zombies bounce off the walls properly. What I realized was that I could make the zombies/humans bounce off a &quot;wall&quot; (i.e. make them change their heading), but agents can bounce outside/across a barrier if the human-speed or zombie-speed is more than the distance between the agent and a barrier (after changing its heading). While changing the heading of the agents when they encountered a barrier, I realized that the order of operations is really important. At the beginning I tried to include the new code (changing heading when encounter barrier) at the end of the go operations for each of the human and zombies movements (avoid-zombies and chase-humans respectively), but then realized that I had to include it before the agents actually moved. I decided that the best position to insert this chunk of code was after the zombie/human evaluates whether there is a zombie/human ahead, then it modifies its heading according to the presence/absence of zombie/human ahead, and after that I made them evaluate whether there was a wall ahead of them. This is easy to do if the agents were just moving one step (fd 1) every time step, but when their speed is variable and more than just one patch per time step, it makes it more complicated (as explained above).</p>
+<p>I've been looking a lot at blogs and examples of different models, but the ones I've seen have the agents moving only one step at a time, so it doesn't really apply for this model. </p>
+<p>I tried making the barriers as a new breed [walls wall] but this was hard because it made x amount of walls depending on how much time I clicked on the mouse, and it ended up making like 40 walls for every click. Then I realized that part of the homework was to change the patches to be walls, so I decided to stick to the idea of walls/barriers being set up by a change in patch color. To try and make larger barriers I tried to increase the size of the mouse when painting barriers, but realized that pen-size can only be applied to turtles, not to patches. </p>
+<p>At this point I have most of the homework ready... except the proper bouncing off the walls from the zombies and humans (big/important part of the homework!!!), and getting the model to export data every 100 ticks instead of every tick. I think I still don't understand how reporters work because every time I try using a reporter I keep getting errors...</p>
+<p>I found what it seems to be a good option in the BehaviorSpace section of the NetLogo dictionary. I found that to make an output every n number of ticks, I could use 'repeat 100 [go]'. However, I tried this and instead of running he code every tick, it ran the code 10 times before the first tick was completed... which is definitely not what I want.</p>
+<hr />
+<h3>Feb 11, 2014 - Importing/Exporting patches.</h3>
+<p>I couldn't find a proper primitive that allowed me to import/export only the patches from the world, so what I did was to export the entire world, without the agents. To do this I created two new buttons: one to export patch and another to import patch. In the setup procedures instead of having clear-all, I included only clear-turtles. That way, I could hit the setup button again without losing the walls created or imported. </p>
+<p>To export the data of number of zombies and number of humans every 100 I basically modified the modified flocking example we worked through last class period. Again, it works fine creating output every 1 tick, but have not figured out how to make the output every 100 ticks. </p>
+<p>I've been trying to create a list that contains numbers 100, 200, 300... up to 10000, and make an if statement, where if number of ticks is within that list, then write-to-file. But... I haven't figured out how to make a list just like in R, where you tell it to make a list from 0 to 1000, every 100. Something like that... </p>
+<p>This is really frustrating... it feels like it should be way easier! I've though of making a string from 1 to 100 and then multiplying it by 100, which would give me a list from 100 to 10000, with numbers every 100... but I think this is overly complicated and it should be...</p>
+<p>Tried 'every'... almost worked, but it uses seconds, not ticks. :-( 
+This is really frustrating... I tried 'every', 'foreach', 'n-value', making lists that multiply with other lists... and nothing works... worst case scenario, do it manually! </p>
+<hr />
+<h3>Feb 11, 2014 - Entry #2. I get by with a little bit of help from my friends...</h3>
+<p>So after trying many different ways on how to output data every 100 ticks, in an act of frustration I sat back on my couch and opened one of my favorite iTunes playlists: &quot;The Beatles&quot;. After a couple of songs, I heard the melodic voice of Ringo Starr** talking to me. It was definitely a sign from... The Beatles. I was stubborn to ask my fellow classmates for help, but after all the frustration and Ringo's message I decided to try and find a little bit of help from my friends. </p>
+<p>**(I wanted to write &quot;the melodic voice of Paul McCartney&quot; but decided google who sang this song, and to my surprise it was Ringo Starr!... Oh! The things you learn doing agent-based modeling...).</p>
+<p>My friends gave me the hint of using the mathematical primitive &quot;remainder&quot;. In that way, if I divided the number of ticks by 100, I would only get results with no remainders every 100 ticks. I used this formula in my 'if' statement to write-to-file, and it worked!!! I knew it was not supposed to be so hard! I was doing it the opposite way... I was thinking on multiplying numbers that gave me a list of numbers that were 100, 200, 300 ... 10000, as opposed to thinking on division! </p>
+<p>Going back and forth on emails with my classmates, we helped each other on things we were stuck on or having problems with the code. They also helped me realize that to make my zombies and humans bounce properly off the walls without moving farther than the wall (if human-speed or zombie-speed exceeded the distance between the agent and the wall ahead). One way of doing this is using the repeat [ ] command, such that agents move one step forward looking for walls until they reach their speed. If they encounter a wall in that process, they change their heading and then continue moving the speed they are assigned. </p>
+<p>When I finally had all the requirements for the homework, I started testing every single bit to check that everything together worked properly. Doing this I realized that the first thing I had to do before running the model was to choose the file where I was going to save the output data. Otherwise, when it got to the 100th tick it popped a message saying that the output file had not been specified. </p>
+<p><strong>in-cone vs. in-radius</strong></p>
+<p>I modified to code for humans and zombies behavior so that instead of using the 'in-radius' reporter I used 'in-cone' and assigned a maximum radius of 10, so that these two agents couldn't see across the entire world... which I thought it was kind of unrealistic (not that the whole zombie/humans living in a pacman-looking city is very realistic). To keep things realistic, I still kept the healers with the 'in-radius' reporter given that they have magical powers and therefore their vision shouldn't be constrained. </p>
+<p><strong>randomness in the model ---&gt; overcrowding</strong></p>
+<p>I also found out that no matter the initial values of the sliders, randomness is going to be very influential on the output. This is because the initial position of the agents in the world is set up to be random. Therefore, I can have two humans inside a building (surrounded by walls) so they wil start reproducing inside the building until it gets really crowded. For example, on the image below you would think that there are a lot more zombies (orange) than humans (blue/green), but if you take a look at the numbers in the monitors, the population for each agents is very similar to each other (1510 and 1233 respectively). This is because all humans are clumped in one building, while zombies are more spread out around the world. Good for humans who found refuge!... but boring for the model... </p>
+<img src="crowded_humans_zombies.jpg" alt="Drawing"style="width:700px"/>
+<p>I could  include a code for population density, where if it gets too dense inside a building or specific area, people start dying faster. </p>
+<p><strong>humans also have to die</strong></p>
+<p>After seeing that humans were crowding so much I decided to include a section in my code to make humans die after a certain number of ticks, to make the model run less human-skewed. I added energy levels to the humans so that their energy would decrease by one every time they moved (i.e. every tick). Include this I had to mention on the info tab (things to notice) that time for a human to hatch has to be smaller than time for human to die, otherwise all humans die before they get a chance to reproduce. </p>
+<p><strong>model running too slow after a couple hundred ticks</strong></p>
+<p>Although my model seems to be running well... I still couldn't figure out how to set up the parameters so that it runs properly up to 10000 ticks. It runds good enough up to ~400 ticks, but then it becomes really really slow, even after I modified the initial populations to be very low. If I started with high population numbers, after a few ticks the total number of humans and/or zombies was insanely large making the model run too slow. </p>
+<p><strong>info tab: no spelling check</strong></p>
+<p>While entering text in the info tab, I realized that I have to be more careful because it doesn't seem to have a spelling check. </p>
+<hr />
+<h3>Feb 12, 2014 - Stop thinking in R code</h3>
+<p>One thing I forgot to mention in my previous journal entries and I just remembered, was that while I was trying to code, I kept thinking on R coding... I tried the repeat function as a way to do something similar as a loop in R, but they work differently. More specifically I wanted to do something more like a for-loop in R, but didn't know how to in Netlogo. In general, many of my problems were because NetLogo has a lot of built-in primitives which I'm still not completely familiar with, so I do not know what I have to &quot;make up&quot; myself in the code, or what is already available... </p>
+<hr />
+<h3>Feb 12, 2014 - Thoughts on the readings for today</h3>
+<p>Dummont and Hill (2004) mention the need to get prior field data in order to apply the model thoroughly. This is really important given that, as mentioned in the reading, there is a number of models that are based on assumptions that violate some biological principles of the organisms you want to model. This is why prior information of ecological and behavioral aspects of the species are needed before implementing models. Also, I feel like many of the ecological models make a big deal of the impact the model might have on conservation strategies... however, for this to be true, prior data had to be precise, and models should be tested in the field to determine whether real organisms are really behaving like the model predicts.  </p>
+<p>One of the questions that come up to my mind is how to apply a generalized model to multiple species. I know that in general, animals follow basic biological principles, but when you want to see the effect of a specific model on a species, you might have to add or remove some of the variables given that they might not apply or be appropriate for your species. In that case, how many added/removed variables would be allowed before the model loses its main structure... and instead becomes a totally new model? For example, in the reading they are talking about herbivorous species, but sheep, cows and other herbivores might differ so much in certain aspects that they might not be comparable??? I don't know... what would be the degree of similarity/difference required to apply a specific model to different species? For example, when talking about the moose, they include many physical, physiological and cognitive attributes that were not included in models for sheep and cows. Therefore... are these comparable in terms of foraging efficiency if models differ that much?</p>
+<p>When talking about spatial memory as a two-part code they talk about reference memory (mapping-like representation of feeding sites) and working memory (remember which feeding sites have been recently visited). How does this differ of spatial and temporal memory, where reference memory would be equivalent to spatial memory and working memory would be equivalent to temporal (what time is it appropriate to visit? Not only time of year, but time considering previous visitations... ). </p>
+<p>When you have so many parameters like in the sheep model (40 parameters, or also in the Optimal foraging model), can you do a statistical test on which parameter(s) are the most influential in their foraging behaviors? I'm assuming the model would still give similar results if one parameter is removed... I'm assuming more parameters simply gives more accuracy to the model... but again, would be harder to test/verify/evaluate in the field?</p>
+<p>Is Tony's GENESYS a hybrid model of ABMs including genetic distance data? How does it exactly differ from ABMs in NetLogo... (read Lina's paper...).</p>
+<p>When do you use the ODD headings in a paper? In the Optimal foraging paper (Nonaka and Holme 2007) they seemed to be following a purpose, scale and variable states with assumptions, design and details.. just like the way it is presented in the methods is not exactly the same as it is presented in the ODD protocol. When to use &quot;own&quot; headings and when to include the ODD protocol as is? Should the ODD protocol for a model be specified only as an appendix? </p>
+<p>In Shipley and Spalinger (1995) MVT underestimates patch-staying times because they used straight-line distances instead of path lengths... are euclidean distances useful at all in spatial models? Shouldn't you always consider path lengths? How to correct for this underestimation? Several species have reported values of home range which can give an estimate of distances travelled, but not many have reported values for daily path lengths. </p>
+<p>Patch staying times... probably strongly influenced by predation pressure, open vs. closed canopy?</p>
+<p>EMERGENCE CHAPTER</p>
+<p>Unpredictable emergent model outcomes vs. imposed outcomes forced to occur or predicted by the model's assumptions.  </p>
+<p>Online I found a website describing BehaviorSpace. I found this when I was trying to get the model to export data every 100 ticks. I found the repeat [go] function, but don't really understand why this is related to BehaviorSpace, and not in the regular NetLogo dictionary? In general why aren't the BehaviorSpace terms included in the NetLogo dictionary? However... to be honest, I didn't open the Experiment tab, and maybe that would've helped. Looking at this dialog box, I could've done the &quot;output every 100 ticks&quot; and the &quot;stop at 10,000 ticks&quot; on this dialog box (Time limit or Stop condition), if I only wanted the data to be exported from 100 to 10,000 every 100 ticks.  </p>
+<hr />
+<h3>Feb 17 and 18, 2014 - Working with Behavior Space</h3>
+<h5>BEHAVIOR SPACE - FLOCKING WITH PREDATORS</h5>
+<p>I left repetitions = 1 but when I finished the experiment in the Behavior space dialog box it said that my sensitivity analysis would be run for 891219 runs. Why this number? Googled and didn't get any answer. </p>
+<p>Before running the experiment, I have to indicate how many simultaneous runs in parallel I want... which is the best criteria to choose this number? It gave me 8 as default, but don't really understand what this means. </p>
+<p>Confused at the beginning. Should I run a single sensitivity experiment for each variable I will change (i.e. one experiment for changing human speed, one experiment for changing monsters speed, etc.), or one single experiment changing all these variables. In the book it says that the sensitivity analysis is supposed to show you how your output changes when you keep all the global variables constant and only let one variable to vary. I started doing a single experiment where speed and vision angle varied in humans and monsters. </p>
+<p>Not sure about the repetitions section...</p>
+<p>Now I get it. I had a huge number of runs before because it is all the possible permutations given the &quot;vary variables...&quot;. So what I had initially was to change the vision angle increasing it every 10 degrees, and the speed increasing every 0.1. Therefore, the number of possible combinations was 891219 runs. What I did was to make the increments lower, where I increased the vision degree angles every 30 degrees and increasing the speed every 0.5. This decreased the number of runs to 5915 runs, which sounds more feasible. </p>
+<p>At the beggining, I had it to start on speed 0 increasing every 0.5. However, if I start with speed 0 nothing is going to happen... agents are not going to move therefore the run is going to take forever. That is why I started with speed at 0.5. This decreased the number of runs to 4056 runs. </p>
+<p>When angle of vision for humans is 0, they do not create any flocks. Human vision angle is 240 degrees they form flocks where they all just go in a straight line. When monsters vision is 0, it seems that they en up moving together following humans. But this only happens when there are only a few humans left, not when there are many scattered. Therefore, the 3 mosnters are going to move clumped together following the only humans alive. </p>
+<p>For the stop code, I tried entering 'humans = 0' and it wasn't working I used 'not any? humans' instead and it seemed to work.</p>
+<p>It takes A LOT of time to do all the runs. It took almost 10 minutes to run 89 out of 4056 runs. </p>
+<p>I was really stupid and hit the abort button thinking I could pause it to check the edit settings of the experiment. It would be nice if there was a 'pause' button. </p>
+<p>40 minutes to complete 473 runs!!! Will abort and decrease the increment number. Changed it to have a minimum speed of 1 patch/tick, and to increase the vision angle every 45 instead of every 30. This gave me a total of 1215 runs. Still a lot... but more reasonable. </p>
+<p>After 4:39 hours (!!!) I get an error message saying that 'Stopping condition failed to report a result: not any? humans'. I checked the dialog box and said that it was on step #135884 of run #1179/1215, so maybe it exceeded the amount of runs? This is the case run where both humans and monsters have full vision (360 angle) but humans more at a 2 patches/tick speed while mosnters move only 1 patch/tick. It would also be nice if there was a way to skip a specific run in the experiment if it is taking too long.</p>
+<p>After almost 5 hours, I had to unwillingly click the abort button...  there was no way those monsters would get to the lonely human since the human was faster... </p>
+<p>However, when I went back to check the excel file, to mu surprise the 1215 runs had completed, with the exception of the run #1179.</p>
+<p>Just playing with the output, in general tables are so much easier to read and sort than the spreadsheet output from the experiments. </p>
+<p>RESULTS</p>
+<p>Quick view. If I sort out by number of ticks (to see under which conditions were humans more persistent) and the largest number is when human speed was max = 2 and monster speed was min = 1, when human vision angle was 270 and monster vision angle was 90. Sorting out didn't show any clear pattern of when humans were most persistent. </p>
+<p>So... I figured out this was really stupid! As usual I keep making the silliest mistakes! Instead of keeping one variable constant, I did one single experiment which included all possible permutations. That is why it was taking so long! I decided to keep all variables constant except one, every time. </p>
+<p>Changing only speed to increase every 0.5, I had a total of 36 runs which were complete after 5 minutes. So much better... </p>
+<p>Also, I just figured out that if I uncheck the update view box, the model runs so much faster!!!</p>
+<p>Tried playing around with R but I'm quite rusted on R coding, so I thought it would be quicker to do it in Excel... not sure about that. Easier, but definitely more work and not such pretty graphs... </p>
+<h5>FLOCKING MODEL MODIFIED</h5>
+<p>QUESTION 2</p>
+<p>BASELINE EXPERIMENTS</p>
+<p>First I did several runs and noticed that the mean standard deviation stabilizes around 500 ticks. Therefore, I set up my Behavior space to stop at 500 ticks. </p>
+<p>Having problems with the plot so turned &quot;off&quot; (placing ;; before in code) for that coding section for the plot. </p>
+<p>As I was running this experiments I could see a Behavior plot... why??? I couldn't realize how to make this show up or not, but it was nice to have it there. </p>
+<p>I was always getting a runtime error saying:</p>
+<p>COUNT expected input to be an agentset but got the number 0 instead.<br />
+error while turtle 358 running
+called by procedure __EVALUATOR</p>
+<p>After a while I realized that this happened because when the model started its run, there were no flockmates. Therefore, during the setup I had to add an extra line of code that said 'set flockmates no-turtles'.</p>
+<h5>MODIFYING NUMBER OF FLOCKMATES = 6</h5>
+<p>I simply had to change the code in the find-flockmates procedure. Instead of having it to be min-one-of [distance myself], I replaced it by min-n-of 6, which reports the 6 closest flockmates. </p>
+<p>Changed: </p>
+<pre><code> find-nearest-neighbor ;; turtle procedure
+set nearest-neighbor **min-one-of** flockmates [distance myself]
+end
+</code></pre>
+
+<p>to  </p>
+<pre><code>to find-nearest-neighbor ;; turtle procedure
+set nearest-neighbor **min-n-of 6** flockmates [distance myself]
+end
+</code></pre>
+
+<p>QUESTION 3</p>
+<p>It was really easy to do this  (specifying the angle of vision to set heading and find flockmates) by changing the in-radius primitive and replacing it by the in-cone primitive.</p>
+<p>QUESTION 4</p>
+<p>This was tricky. At the beginning I tried to incorporate the code of sex-associations (same-sex, opposite-sex, or indifferent) in the go procedure, but it was clearly not working. I was getting error messages for the same-sex and opposite-sex associations when animals were trying to cohere and separate. Then I simply added the code in the find-flockmates procedure to change their heading when finding flockmates and this worked. </p>
+<p>This homework was challenging but fun. It was all a process of trial and error, but with a LOT of error. Once you have an idea of how things work... things are much easier. My biggest problem was definitely at the beginning when I thought that I had to include all the variables and permutations in one single experiment. Also, it is tricky sometimes to figure out how you want to visualize your data. There are different ways to graph your results, and I thought the best way to graph most of these results (at least for question one) was using a 3D graph, but couldn't find how to do this in excel or ggplot using R. When there are many variables that are changing, and interactions between variables in an experiment, you have to decide which is the best way to create the graphs for them to be most informative or easier to read. </p>
+<hr />
+<h3>Feb 19, 2014 - Thoughts on Readings Week 6</h3>
+<h5>Nathan et al. 2008</h5>
+<p>Four basic components of organismal movement:
+1. The internal state (why move?)
+2. The motion (how to move?)
+3. Navigation capacities (when and where to move?) - ability to orient in space and time
+4. External factors affecting movement. - Aspects of biotic and abiotic environment influencinf movement. </p>
+<p>Same movement can be attributed different classifications. E.g. foraging = moving-within-patches = station-keeping. It really depends on whether it is defined in terms of a goal, the landscape or temporal dynamics. </p>
+<p>Eulerian approach: quantifies population re-distribution
+Lagrangian approach: quantifies movement of individuals. For larger organisms - relies on high spatiotemporal resolution over sufficiently large spatiotemporal scales. Telemetry! (limited in body size).  --&gt; BUT ALSO DEPENDENT ON COST! THESE ARE EXPENSIVE TECHNOLOGIES.</p>
+<p>Ecoinformatics. 
+Movement databases: www.movebank.org</p>
+<p>Tracking tech compared with genetic sequencing. 
+Lifetime movements??? Really depends on life history variables and telemetry capacity. For large long life history animals it would be harder to have a device that lasts than long. </p>
+<p>Movement phases, sampling frequency. The deconstruction of a movement path into a sequence of movement phases depends on the temporal resolution of the data. </p>
+<p>Movement phases - made up of smaller units: CANONICAL ACTIVITY MODES</p>
+<p>It feels like it would be overwhelming trying to create a model with so many different variables, that can change a lot through time. How precise is the model for a different time period? Looking at internal/external factors observed today, can we really know whether these variables were the same in the past? Can it really tell us about evolutionary history and ultimate causes of specific types of movement?</p>
+<p>Characterization of movement... looks very bird-oriented (?)</p>
+<h5>Conradt et al. 2003</h5>
+<p>So, basically looking whether there is a consistent emerging pattern when modelling foray seach? Modelled in habitat patches, but how is a patch defined? From the title I assume they refer to a fragmented landscape, but a patch can simply be a specific patch in the forest with available resources, or a fruiting tree... differences between different types of patches are important, therefore it is important to define what they mean by patch. And what about movement in a non-fragmented forest? Does dispersal happen in the same way? How does it change? </p>
+<p>Does the dispersal strategy explained is restricted for movement in a straight line in an ellipsoidal pattern, or does it allow some degree of randomness in the movement? Also, is there a width parameter specified that allows some flexibility in movement? </p>
+<p>Energetic constraints in foray search - why carry around resourcces? Is it because it is a fragmented landscape? What about corridors? Don't they have resources in between that support individuals during their dispersal movement? Not all species require these types of energy reserves because they can get resources along their dispersal movement.</p>
+<h5>Fronhofer et al. 2013</h5>
+<p>Memory - lots of variation across species. The degree in which individuals can memorize is going to depend at some extent in the cognitive abilities of the species in general.</p>
+<p>Wang and Grimm 2007</p>
+<p>Daily time scale. From the papers we read for this week, this is the only one that makes a clead ODD protocol (obviously... because one of the authors is Grimm, creator of the ODD protocol). So when use and when not to use this protocol as part of the publication? For example, on Tony's paper with Lina, they don't really write an explicit ODD protocol like it is written down here... so I wonder when is it appropriate and when is it not? Also, I was expecting to find supplementary material that included the code for the Tamarins paper... why not include it? </p>
+<p>I thought this paper was nice because tested the model against actual data collected in the field. </p>
+<p>All these papers talk about individuals looking for resources, but what about when movement patterns are not dictated mainly by food but other things? For example, primates... males seeking females. Of course this will be determined by food availability and distribution for females, and in turn affect male movement patterns... but males might be seeking specific females in their reproductive status, and their movement patterns might be different from females that are not sexually receptive at a given time... </p>
+<hr />
+<h3>Feb 24, 2014 - Working on new ODD =&gt; POLYGYNY THRESHOLD MODEL</h3>
+<p>I've been reading about the polygyny threshold model, like Tony suggested. I do agree that my previous ODD protocol was kind of vague. Especially because I think it was very specific for saki monkeys, and very specific to the saki monkeys that I know, which are the ones from Tiputini. So I decided to follow Tony's advice and do something more general and related to mating systems, such as the polygyny threshold model (PTM). This model is very socioecological, which is really good to use on an AMB since I can model landscapes with habitats that vary in their distribution and abundance of resources, males trying to monopolize the better quality habitats and females choosing to mate with males that defend the most productive habitats (better quality in resources). I think the PTM is better to model on Netlogo since it is more precise and it doesn't have so many variables like I was thinking before for the saki monogamy model. </p>
+<p>Although PTM is mostly studied on birds it can also be applied to other species such as primates. The PTM makes reference to birds where females are choosing the males for mating, which is similar to what is observed in many primate species where females are considered the &quot;choosy&quot; ones. I will start modeling this model in the simplest way, following the basic statements of the PTM, and then the model can be tweaked to determine some parameters for specific primate species.  </p>
+<hr />
+<h3>Feb 25, 2014 - Working on the PTM model</h3>
+<p>I started creating the setup environment for the PTM. The idea is to start the model with males established in specific territories that have a specific amount of resources. Then females start moving in the environment looking for males that are established in territories that meet their minimum nutritional requirements. I assigned dominance levels randomly to males, and what I wanted initially was to setup the males first and then they would create a territory depending on their dominance level: more dominant males would be able to establish in territories with more and higher quality resources. For this I would setup the resources first in the landscape, and then introduce the males to create their territories. However, I thought this was hard to model, and it could be conflicting when a male was displaced from its territory by a more dominant male. To keep it simple I decided to create the territories first, dividing them by a grid, and then placing dominant males randomly to those territories. I have not figured out whether it is better to have resources to be assigned as a patch with a different color, or to be assigned as an agent, and then territories would be an agentset with resources... dunno! </p>
+<p>Anyway... how I did it was to make resources to be patches of different colors and then territories are divided by a grid (that is also determined by patches of different colors). To make the resources I used the model we used on a model we used previously in class (the foraging model) and to create the grid I modified the code that was used in one of the models in the Netlogo library (the Traffic model). </p>
+<p>Ideally, what I want to create is different patches that have an ID and have a random number of initial resources. Then the most dominant males move to the better quality patches and then the females move randomly until they find a territory that has a male and that has the minimum resource requirements. I decided that females do not have to look for the better quality territories, but instead look for males, and if the male in that territory can monopolize enough resources, the female decides to stay regardless of the male's dominance. Dominance only determines where the males are going to be established according to the habitat quality. </p>
+<p>I also started working on the skeleton for the to go procedures, and I have some ideas of the workflow, but haven't set them up to work yet... However, making up the skeleton really helped me for writing the process overview and scheduling of the ODD protocol. Actually, what helped me the most and I think it is a really good idea, were the powerpoint slides with the flow chart of the go procedure for males and females.</p>
+<hr />
+<h3>Feb 25, 2014 - Disappointment with my grade from last week.</h3>
+<p>I think the assignment for last week was hard and it took me a lot of time! So it was kind of disappointing to see my grade... I guess maybe I'm not reading the assignments correctly, or I'm really not understanding what Tony wants us to do... Maybe the assignments could be a bit more specific. Not leave questions for &quot;pick some variables&quot;, but maybe specify which type of variables? This is because in the previous assignment there were too many things that could be done, so I picked to see change the variables that we used when we were working on the flocking model during class... </p>
+<hr />
+<h3>Feb 26, 2014 - Reading: Parameterization and calibration</h3>
+<p>Parameters - constants in equations and algorithms
+Parameterization - step of selecting values for a model's parameters. 
+Calibration - find good values for a few especially important parameters by seeing what parameter values cause the model to reproduce patterns observed in the real system. 
+- calibrating models against data
+- calibrating models to fit a model to data</p>
+<p>Why calibrate?
+1. Calibrating a model: we want to force the model to match empirical observations as well as possible. Make the model more accurate/predictable. 
+2. Calibrating a parameter: to estimate the value of parameters that we cannot evaluate directly.  (a.k.a. inverse modeling). 
+3. to test a model's structural realism. How robust the model is. </p>
+<p>In ABMs, each submodel can be parameterized  and tested by itself. Calibration in ABMs is a &quot;fine-tuning&quot; of a small fraction of its parameters. </p>
+<p>Trick for credible parameterization: 
+1. design your model so its parameters represent real quantities ir rates that could be measured empirically. Otherwise you just have to guesswork... which can be extenuating and time consuming!
+2. show that your parameter values cause the submodel to produce reasonable results in all situations that possibly could occur. </p>
+<p>&quot;guesstimating&quot; parameter values:
+1. define upper and lower bounds
+2. fast or slow time scale? strong or moderate impact? often or rare? Define a reasonable range for parameter, from which you can select the middle, or try several values. </p>
+<p>CALIBRATION: execute a model many times, each time using different values and then analyze results to see which parameter values caused the model to best reproduce some patterns observed in the real system. </p>
+<p>Avoid overfitting. </p>
+<p>Categorical vs. best-fit calibration. Categorical: search for parameter values that produce model results within a category or range defined. Best fit: search for one set of parameter values that cause the model to best match some exact criteria (optimization).</p>
+<p>Time-series calibration: for ABMs that simulate how a sustem changes over time. </p>
+<p>Simulation experiments: results of simulations will tell us what ranges of parameter values produce results that meet the calibration criteria. </p>
+<p>Analyze calibration experiment results: how closely does the calibrated model fit the criteria?</p>
+<hr />
+<h3>Feb 26, 2014 - Embedding images on the markdown</h3>
+<p>So I've been using the markdown for R studio, and Tony tells me he is having a hard time seeing the images. I tried using the MOU syntax, but I haven't upgraded my computer so the software I have is not compatible with the MOU syntax which requires MAC OS X 10.7+ (mine is OS 10.6.8 !!!). So what I did for now was to open the files in R studio and knit the information into an html file so that the images actually work. </p>
+<p>Here is some evidence that in R studio it works properly (and a photo for your collection of photos in the field):</p>
+<img src="evidence.jpg" alt="Drawing"style="width:700px"/>
+<hr />
+<h3>Feb 26, 2014 - Class notes</h3>
+<p><strong>For my model</strong></p>
+<p>To keep track of all the kids that an agent has, make a list. </p>
+<p>For dominance interactions, dont make it a yes no but instead give probabilities of winning and taking over the territory. </p>
+<p>Instead make them jump from one territory to the other (as opposed to make them moving between territories). This simplifies the model. Make them jump just like in the SEGREGATION MODEL in the Netlogo library. </p>
+<p>Use generic food (dont make differences between leaves and fruits. Do it general = resources).</p>
+<p>Check models that have different levels of patchiness. </p>
+<p>Check woodhoopoes model (canvas) for setting up territories. </p>
+<p><strong>From slides</strong></p>
+<p>Visual testing
+Scale-scolor, label and plabel</p>
+<p>To import images: import-pcolors</p>
+<p>Read-line. It reads and entire line of data, puts it in a string and looks up for spaces. It will print out words in a line. Reads and parses out based on, for example, white spaces. Reads all characters until end of line and then separates words. 
+The other one does the same but does it until you hit enter. It separates by when you hit enter???</p>
+<hr />
+<h3>Feb 28, 2014 - Checking out the Woodhoopoe Model</h3>
+<p>Tony said it would useful for me to check the Woodhoopoe model. To be able to open two windows of NetLogo in my Mac computer, I followed Tony's advice of copying the folder where Netlogo is located. I copied it and gave it a different name and it worked. This model simulates woodhoopoes scouting for vacant territories after they decide to leave their group, which is basically what I want to do with the males in my model. Reading the info tab there are a lot of similarities with what I want to do. </p>
+<p><em>&quot;Birds undertake scouting forays. Subordinate adults decide whether to scout for a new territory with a vacant alpha position, using the scouting decision submodel described below. Birds that do scout choose randomly (with equal probability) between the two directions they can look (left or right along the row of territories). Scouting birds can explore up to five territories in their chosen direction. Of those five territories, the bird occupies the one that is closest to its starting territory and has no alpha of its sex. If no such territory exists, the bird stays at its starting territory. All birds that scout (including those that find and occupy a new territory) are then subjected to predation mortality, a stochastic event with the probability of survival 0.8.&quot;</em></p>
+<p>Especially regarding territories having alpha and subordinate individuals. In my case, there will only be a hierarchy among males, and females will all be the same rank. Also, in my model I will not include chances of predation. </p>
+<p>However, I have to include mortality in my model, otherwise there will be too many birds for the amount of territories. </p>
+<p>I guess my model functions using the same basic principle as the woodhoopoe model: the stay-or-leave question of when should an individual (in my case it would be any agent: an unsatisfied female or an unsatisfied male) leave a group. In the woodhoopoe the decision of staying or leaving in a group is based on the idea that a group provides safety for individuals. However, in my model this decision is based on the availability of resources for individuals. </p>
+<p>So... in the whoodhoopoe model, the size settings are 12x0. So there are 12 patches in a row... so each territory is a single patch?</p>
+<p>I've spent a while to make a checkerboard pattern for the patches of my world... it seems to be more complicated than I thought. I am using the remainder function so that </p>
+<pre><code>to setup
+Shade the patches
+ask patches
+[
+ifelse ((remainder pxcor 2) = 0.0) and ((remainder pycor 2) != 0.0)
+[ set pcolor black]
+[ set pcolor white]
+ifelse ((remainder pxcor 2) != 0.0) and ((remainder pycor 2) = 0.0)
+[ set pcolor black]
+[ set pcolor white]
+]
+end
+</code></pre>
+
+<p>but this seems to be more complicated... this does not give me a checkerboard pattern, but instead it just gives me a black/white pattern for ycor lines 0,2,4... but not for ycor lines 1,3,5...</p>
+<p>This is because I am overriding the first ifelse with the second ifelse. </p>
+<p>I'll try tomorrow...</p>
+<p>I kept working for a bit... and finally got it to work!!! Good night!</p>
+<hr />
+<h3>March 1, 2014</h3>
+<p>Last night while I watching a movie and eating pop corn, I thought it would be pretty cool to model how corn kernels pop. Pop corn kernels are supposed to pop into different shapes depending on the structure of the kernel. Just like the fireworks model in the NetLogo library, it would be interesting to have a pop corn model... </p>
+<img src="popcorn.jpg" alt="Drawing"style="width:300px"/>
+<hr />
+<h3>March 4, 2014</h3>
+<p>Today I've been trying to setup the agents. Incorporating females and trees is easy... I'm simply setting them randomly in the world. The tough part has been incorporating the males. Basically what I want them to do is to be ordered in number of dominance level, and then have the male with highert dominance move-to the patch/territory with more trees (so basically I had to setup the trees first before setting up the males). I've been able to have them go to the patch with most resources, but I'm having a hard time having each male go to a specific patch. I've been trying to create while loops, but have not succeded. Also tried using sort and foreach, but it didn't work. After trying for a long</p>
+<p>I asked Tony for help and it works now. </p>
+<p>One of the problems was that the way I was assigning dominance, two males could have the same dominance. I was using the 'random' function, as opposed to the random-float. Tony's advice was to assign a dominance value to each male using random-float, and the sort them out and assign that order to a new variable that is called rank. Therefore, males with lower dominance values will have the higher rank (this is counterintuitive but it helps modeling in such way that you can rank them), where males with rank = 1 are the ones who are going to the territories with more trees. We did this by first assigning dominance using the random-float, and then using foreach and sort-on to assign rank. Then we asked the males in the rank order to find-pathches if they were not occupied by a higher ranking male. </p>
+<pre><code>create-males initial-males [
+set shape &quot;bird side&quot;
+set size 0.2
+set color blue
+**set dominance random-float 1**
+set male-energy 50
+]
+    let i 1
+**foreach sort-on [dominance] males** 
+[ask ? [set rank i set i i + 1]] 
+foreach sort-on [rank] males [
+ask ? [find-patch ask patch-here [set occupied? true]]
+]
+</code></pre>
+
+<p>To find-patch what they did was to move to the unoccupied patch with maximum number of trees. </p>
+<pre><code>to find-patch
+move-to max-one-of patches with [occupied? = false] [number-trees]
+ask patch-here [set occupied? true]
+end
+</code></pre>
+
+<p>Now the setup of the world is working just like I wanted!!! :-) Thanks Tony!</p>
+<hr />
+<h3>March 5, 2014 - DomWorld</h3>
+<p>This is going to help me a lot with my model!</p>
+<p>I could include in RANK REVERSALS, where lower ranking males that defeat higher-ranking males take over their rank status, and vice versa. That way, lower-ranking males can escalate. </p>
+<p>Be careful with the probability of success of lower-ranking males. Do not exaggerate. </p>
+<p>I could also include something similar to the fleeing model, where males that are defeated have to move in-radius x from that territory (therefore, they cannot simply move the next available patch, if the patch is adjacent to the winner... ). Just an idea... </p>
+<hr />
+<h3>March 5, 2014 - MarkdownPad</h3>
+<p>I downloaded the MarkdownPad to make the .md file because when I copy-pasted the code it looked funky. I'm still trying to figure out how to enter code appropriately... </p>
+<p>Got it! I just have to enter tab ... </p>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->
