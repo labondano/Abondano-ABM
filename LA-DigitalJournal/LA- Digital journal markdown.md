@@ -594,6 +594,13 @@ Some of the output graphs I obtained were hard to analyze. I have a lot of fluct
 
 Other things I thought it would be nice was to have males and females moving towards the patches with the total amount of resources available (tree-energy)), instead of the total amount of trees (which is not a true representation of the amount of energy that the patch is providing). I could also try to have the minimum amount of resources to be the actual number of resources (tree-energy) as opposed to the amount of red trees required). 
 
+__________________________________________
+####March 18, 2014 - Github for windows
+
+I like the Mac version better...
+
+__________________________________________
+
 
 
 
