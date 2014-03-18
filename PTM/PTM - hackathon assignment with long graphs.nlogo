@@ -511,7 +511,7 @@ regeneration-time
 regeneration-time
 0
 100
-0
+50
 1
 1
 NIL
@@ -541,7 +541,7 @@ initial-females
 initial-females
 0
 100
-56
+20
 1
 1
 NIL
@@ -610,7 +610,7 @@ female-min-resources
 female-min-resources
 0
 5
-1
+5
 0.5
 1
 NIL
@@ -625,7 +625,7 @@ male-min-resources
 male-min-resources
 0
 5
-1
+5
 0.2
 1
 NIL
@@ -658,10 +658,10 @@ count trees with [color = red]
 11
 
 PLOT
-832
-85
-1133
-235
+41
+478
+1184
+628
 mono-vs-poly
 ticks
 percent
@@ -688,10 +688,10 @@ MONITOR
 11
 
 PLOT
-834
-245
-1135
-395
+43
+646
+1187
+796
 resources for females
 ticks
 count
@@ -708,10 +708,10 @@ PENS
 "trees-per-female" 1.0 0 -12087248 true "" ""
 
 PLOT
-834
-399
-1137
-549
+42
+815
+1187
+965
 sex ratio of poly-groups
 ticks
 count
@@ -725,6 +725,17 @@ true
 PENS
 "trees-per-individual" 1.0 0 -12087248 true "" ""
 "mean-sex-ratio" 1.0 0 -12572331 true "" ""
+
+MONITOR
+831
+78
+1063
+123
+NIL
+count females
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
