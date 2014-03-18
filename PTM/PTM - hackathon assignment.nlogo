@@ -411,7 +411,6 @@ to do-plot3
   plotxy ticks mean-sex-ratio]
   [ plotxy ticks 0]
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 395
