@@ -696,6 +696,11 @@ _________________________
 AAPA craziness. I was worried about trying to finish up the presentation and totally blanked out about doing the digital journal (to be honest I didn't really think we had to do it this week, but I saw afterwards and saw that we had to). Oops! :-( 
 
 __________________________
+#### APRIL 13, 2014 - Dominance models online
+
+I've been glancing through some of the dominance models for ABM, and on the Open ABM website there are a couple that look useful. The one that I think is more interesting is the A-KinGDom: A Kinship, Grooming and Dominance Model for Primate Societies. It looks really cool! However, I think the modified version of Hemelrijk's model (the one designed by Sean Barton, which includes feeding) would be a better fit to use in my PTM model. However, I really wanted to check the A-KinGDom model but its not written in Netlogo but instead it is written in C programming language so I couldn't open it (or I just didn't know how to...).
+
+________________
 #### APRIL 15, 2014 - Working on Dominance interactions on the PTM model
 
 I thought of using Hemelrijk's dominance model (from the modified version on the model that I found on Open ABM and includes feeding - by Sean Barton), but I thought it would be simpler to have males interacting if they enter each other's territory, without estimating the other male's dominance value. I though a good way to set up the interaction was to assign a winning probability of 0.8 to the male with highest dominance value in the interaction, and a winning probability of 0.2 to the male with the least dominance value in the interaction. (In the future I could make this more complex by assigning different winning probabilities depending on the specific dominance values the males have at the moment of the interaction). To setup the interaction what I did was to randomize a number between 0 and 0.8 for the dominant one, and then randomize a number between 0 and 0.2 for the least dominant one, and the agent with highest resulting dominance is the winner. Then the winner will be assigned with the dominance value of the more dominant male in the interaction, and the loser will take the dominance value of the least dominant male in the interaction.
@@ -723,6 +728,83 @@ I was going to code how to make infants move. However, I first need to create li
 I still don't know whether I should make infants forage or not, or wait until they become adults to forage and use resources in the patches. It makes sense to make them forage since the whole point of the PTM is to select males that can provide enough resources for the females' offspring to survive... 
 
 IMPORTANT: if I want females to lose energy when they reproduce, I have to put this line of code before they hatch the infants. Otherwise, if will say that infants do not own female-energy. 
+
+
+________
+#### APRIL 16, 2014 - Correcting % monitors on interface
+
+Today I noticed that the output of the monitors weren't showing what I wanted them to show (% monogamous vs. % polygynous groups and % roaming males). I was having Netlogo to calculate the % of monogamous vs. polygamous, without taking into account roaming males. So I added the number of patches that had roaming males (males without any female) into the equation to get the real percentages. I also added a monitor that counted the % of occupied patches with roaming males (i.e. males that have no females in their territory).
+
+
+________________
+#### APRIL 16, 2014 - Notes and Thoughts from the readings (GIS and Netlogo)
+
+Coupling GIS and ABMs ---> GIS limitation for its ability to hadle time (the representation of continuous variation). Challenges: 1. continuous data over a period of time are scarce, and 2. creating data models able to record, store and visualise info. about an object in different temporal states. Challenge 1 achieved with ABMs (models different data over time).
+
+GIS - very good at dealing with spatial information and analyses, but not analysing dynamics over time. 
+
+A question about coupling... so is your GENESYS model a coupling of ABM and some other software, or would that only be an example of integration/embedding? If I understood correctly, R connected to Netlogo (and viceversa) would be an example of coupling (...right?).
+
+In Netlogo ---> polygon files are imported into a Netlogo model and converted into patches. Would points be agents?
+
+Key relationships for geographic data and ABM process to interact: 1. identity, 2. causal, 3. temporal, and 4. topological. 
+
+Environmental models vs. GIS: former specified as process models (predict nature of exchange of energy and mass within systems, over time), latter specified as data models (predict the structure of the real world domains).
+
+I checked the two GIS gradient example on Netlogo. I think it is pretty cool that displying aspect, slope and gradient, three different visualizations, can be done as simple as clicking a button on the GUI. This looks pretty cool and the code seems to be very simple, specially the go procedure. I wonder then if the setup procedure is always more complicated than the go procedure when integrating GIS in the models. It looks very simple, but I'm sure its gets way more complicated...
+
+_________ 
+#### APRIL 16, 2014 -  Comment about Tony's comment
+
+I still don't really understand what you were saying on your comment for my model (from the Hack-A-thon homework): 
+
+_"Also, I think I've mentioned this elsewhere, but I think you are misunderstanding one of the things about the PTM... FEMALES coming into a population choose among males on the basis of their access to resources... if a female gets better access to resources by being the 2nd female in a male territory, then she should choose to do that rather than be monogamous."_ 
+
+I really thought this is what my model was doing, but I will to the verification test. However, I don't understand either the comment about the verification: 
+
+_"One validation test you should do would be to demonstrate that females in your model do just that when they have perfect information about territories and are free to move around without costs. [Adding in uncertainty or movement costs might => more or less polygyny, or deviations from an ideal free distribution under the PTM.]"_
+
+I don't understand what you mean by adding in uncertainty. And I didn't know either about females having perfect information about the territories. How I have it set up is to have females detect the information about their current territory, not all territories.... 
+
+... I'll come to you office hours tomorrow and talk to you about it. 
+
+__________________
+#### APRIL 16, 2014 - Class notes: Intergating NetLogo and GIS
+
+For the final project presentation:
+Purpose, process, pseudocode, experiments, analysis of results
+Show the model. 
+
+QUANTUM-GIS - open source GIS software. 
+
+Temporal changes can be continuous, episodic or sporadic. May occur at one ro many locations. To represent temporal change we can use superimposed rasters (location-based). We can also update attributes of an object (e.g. a time-line of events - time based).
+
+**gis extension**
+
+These primitives start with "gis:______". It allows to load and interact with vector and raster data. 
+
+Limitations: 
+1. Need vector data in ESRI's shapefile (.shp) format. 
+2. Need raster data in ESRI's ASCII Grid (.asc or .grd).
+
+The extension allows to use spatial and imagery info as data structures for patch and agent data
+Can use .jpeg files or WMS for images. 
+Also allows drawing on top of the fundamental layers in NEtlogo (patch and turtle layers).
+Other spatial formats: KML (format used in Google earth).
+Q-gis can read and convert between many different formats, to then use it in Netlogo. 
+
+Basic process: 
+1. Define a transformation between GIS data space and Netlogo space
+2. Load datasets
+3. Perform spatial operations on them
+
+A good primitive for gis is using the gis:contained-by? primitive (see code done in class).
+
+__________________________________
+
+
+ 
+
 
 
 

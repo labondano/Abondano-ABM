@@ -16,7 +16,8 @@ males-own [
   male-happy?
   ;;parental-care???
   probability-win
-  win]
+  ;win
+  ]
 females-own [
   ;;quality??
   female-happy?
@@ -229,7 +230,7 @@ end
 
 to check-female-happiness
   ask females [
-  ifelse ((count trees-here / (count females-here + count males-here)) >= female-min-resources) and any? males-here
+  ifelse any? males-here and ((count trees-here / (count females-here + count males-here)) >= female-min-resources) 
         [set female-happy? true]
         [set female-happy? false]
   ]
@@ -310,7 +311,7 @@ to dominance-interaction
   ask males-here with-max [dominance] [set probability-win random-float 0.8]
   ask males-here with-min [dominance] [set probability-win random-float 0.2]
   ;;ask males-here with-min [probability-win] [male-find-new-patch set size 5 set color "yellow"]
-  ask males-here with-min [probability-win] [set win "lose" set color yellow]
+  ask males-here with-min [probability-win] [set color yellow male-find-new-patch]
 end
 
 
@@ -514,7 +515,7 @@ initial-trees
 initial-trees
 0
 500
-188
+277
 1
 1
 NIL
@@ -559,7 +560,7 @@ regeneration-time
 regeneration-time
 0
 100
-50
+20
 1
 1
 NIL
@@ -673,7 +674,7 @@ male-min-resources
 male-min-resources
 0
 5
-5
+1
 0.2
 1
 NIL
@@ -688,7 +689,7 @@ energy-to-reproduce
 energy-to-reproduce
 100
 300
-151
+120
 1
 1
 NIL
@@ -725,12 +726,12 @@ PENS
 "%-mono-patches" 1.0 0 -5298144 true "" ""
 
 MONITOR
+832
+140
 942
-28
-1052
-73
+185
 % monogamous
-(count patches with [number-females = 1] / count patches with [occupied? = true]) * 100
+((count patches with [occupied? = true and number-females = 1]) / (count patches with [number-males != 0])) * 100
 17
 1
 11
@@ -799,6 +800,28 @@ age-of-dispersal
 1
 NIL
 HORIZONTAL
+
+MONITOR
+832
+191
+933
+236
+% polygamous
+((count patches with [number-females > 1]) / (count patches with [number-males != 0])) * 100
+17
+1
+11
+
+MONITOR
+832
+242
+948
+287
+% roaming males
+((count patches with [(occupied? = true) and (number-females = 0)]) / (count patches with [number-males != 0])) * 100
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
