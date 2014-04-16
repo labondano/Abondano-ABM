@@ -1,0 +1,91 @@
+Laura Abondano
+Programming assignment
+NetLogo and R and MySQL, oh my!
+========================================================
+
+Install and load required packages to connect R and Netlogo:
+```{r Loading required packages}
+library(rJava)
+library(JavaGD)
+library(RNetLogo)
+```
+
+To load modified Flocking model from Netlogo:
+```{r Loading modified Flocking model from Netlogo}
+nl.path <- "/Applications/NetLogo 5.0.5"
+NLStart(nl.path, gui=FALSE)
+nl.model <- "/Users/Bondi/Dropbox/UT-Austin/4th Semester/Agent Based Modelling/Abondano-ABMGitHub/SQLFlocking/Flocking.nlogo"
+# replace the path above with your own path the to Flocking.nlogo program
+NLLoadModel(nl.model)
+```
+
+Write a function called “sim” with an argument of “vision” to set the vision slider in the Flocking model and run the simulation for 300 ticks, returning the mean deviation of turtles from their flockmates:
+
+```{r sim function}
+sim <- function(vision,sim.ticks){
+  NLCommand(paste("set vision ", vision), "setup")
+  NLCommand(paste("while [ticks < ", sim.ticks), "] [go]")
+  NLCommand("export-db")
+  result <- NLReport("mean [deviation] of turtles")
+  return(result)
+}
+sim(10,300)
+```
+
+Write R code to return to R a data structure containing the mean deviation of turtles from their flockmates after 500 ticks with vision ranging from 1 to 10 by increments of 0.5:
+
+```{r 500 ticks changing vision from 1 to 10, by increments of 0.5}
+#vision.by.0.5<-function(vision.seq,sim.ticks){ deviations<-data.frame(matrix(nrow=((2*(tail(vision.seq, n = 1))))-1),ncol=2) ##Empty dataframe
+  #names(deviations)<-c("Vision","Mean.deviation") ##Naming columns of dataframe
+  #for (i in 1:length(vision.seq)){
+   # vision<-vision.seq[i]
+    #NLCommand(paste("set vision ", vision),"setup")
+    #NLCommand(paste("while [ticks < ", sim.ticks),"] [go]")
+    #NLCommand("export-db") 
+    #deviation<-NLReport("mean [deviation] of turtles")
+    #deviations[i,]<-c(vision,deviation)
+  #}
+  #return (deviations)
+#} 
+
+#vision.tests <- seq(1,10, by = 0.5)
+#vision.by.0.5(vision.tests,500)
+
+### Alternatively (Tony's code):
+plot(vision <- seq(1,10,0.5), sapply(vision, function(vis) {sim(vis,500)}))
+alternative.vision.by.0.5 <- data.frame(seq(1,10,0.5),sapply(vision, function(vis) {sim(vis,500)}))
+names(alternative.vision.by.0.5)<- c("vision", "mean deviation of turtles")
+alternative.vision.by.0.5
+
+```
+
+Write R code to return to R 10 replicates of runs with vision distance ranging from 1 to 10 by increments of 1 and plot a box plot of these results. HINT: use the code I uploaded last week with the sapply and lappy functions
+
+```{r 500 ticks changing vision from 1 to 10, by increments of 1}
+
+# function to perform replicated simulations
+rep.sim <- function(vision, rep) {
+    q3<- lapply(vision, function(vis){
+    replicate(rep, sim(vis,500))
+  })
+  q3.df<- as.data.frame(q3)
+  names(q3.df)<-vision
+  return(q3.df)
+}
+
+# now looking in detail at a specific range of vision
+# vision: 1-10, stepwidth: 1, 10 replications
+vision.new <- seq(1,10,1)
+vision.replicates <- rep.sim(vision.new,10)
+vision.replicates
+boxplot(vision.replicates,names=vision, xlab="vision", ylab="mean deviation")
+```
+
+
+
+To quit the Netlogo Flocking model:
+```{r Quit Netlogo}
+NLQuit()
+```
+
+

@@ -600,6 +600,129 @@ __________________________________________
 I like the Mac version better...
 
 __________________________________________
+####March 23, 2014 - Installing Rstudio
+
+I finally got R studio to work on my computer. All I had to do was to go to the terminal and look for previous versions of R that were installed in my computer, and then delete these files using the commands:
+
+	rm -rt
+	
+And what this command did was to remove all the files contained in the folder R.frameworks/Versions/2.1.1. Now R studio works and I can hook it up with Netlogo. Yay!
+
+____________________________
+####March 26, 2014 - Connecting R to Netlogo
+Ihad problems connecting R to Netlogo. I tried to do it the alternative way for Mac, but it didn't work so I tried to use the terminal. I realized I needed to be careful working with the terminal because I had to have spaces after sudo and after nano, otherwise it wouldn't work. I did the systemcheck.nlogo and all seemed to be working fine. 
+
+Then I went through some of the steps from the  Thiele tutorial. I did again the exercise we were working on last class with the FLocking model, and got it to work on my computer as well.
+
+I also played with the JGR program, which it kindly installed the required R packages automatically. It works very similar to R studio, but R studio's interface is better in my opinion because instead of popping out plots, you can have them in the same screen, and see previous plots. Also, the help screen is also on the same window, which I find it easier. 
+
+
+-----------
+####MARCH 26, 2014 - Class notes: MySQL
+
+MySQL and PostgreSQL: Largest open source databases
+Download:
+http://code.google.com/p/netlogo-sql/ (put this in the extensions folder inside netlogo)
+http://www.mamp.info/en
+Apache setup: 80 & 3306
+
+For MAC use MAMP. (Apache + SQL + php) 
+For PC use XAMPP. (Apache + SQL + php + Perl.)
+
+The convention is to capitalize commands. 
+
+New primitives:
+
+- sql:configure - establishes a connection with MySQL
+- sql:current-database - returns the name of the current dbase
+- sql:exec-direct - executes SQL commands
+- sql:fetch-resultset - returns the result of a query
+
+SQL Commands:
+- check cheat sheet Tony posted online for MySQL. 
+
+
+__________
+####MARCH 30, 2014 - R Studio Homework
+
+Today I continued working on question 3 of the Programming assignment. My 'sim' function seems to be working just fine. However, when I'm running the simulations I have to do setup a smaller number of ticks otherwise my computer crashes with 300 or 500 ticks. I used 10,20 and 50 ticks to test my simulations. While doing the simulation function, we (Andrew and I, with Tony's help in class)realized that we could use NLCommand instead of NLDoCommandWhile, and it worked in both cases. 
+
+For the second part of question 3 I started doing it manually (with my rusted and very basic knowledge of R). In this case I want to store not only a single value but instead I want to store a data frame that contains all the values for vision every 0.5 . In this case, what I had to do first was to create an empty dataframe where I could store my output from the simulation. Then I created a for loop where I run the simulation for every vision value I was interested (i.e. from 1 to 10, by increments of 0.5) until it reached the last value in that sequence. Then I copied the code that I used previously for the simulation, and then I basically appended every single output to the preexisting dataframe to get the final output. 
+
+After writing this code I read again the assignment and saw Tony's HINT. I realized this is the same code from  Thiele's paper where there is a tutorial. It is a much simpler and cleaner code, so I decided to stick to this one instead. 
+
+For the last part of question 3, I also used the code from Tony's hint / Thiele's tutorial. On a first try, I did the replication simulation and then I used that output to make the dataframe. However, when I checked the names for this dataframe they seemed odd (weird string of random numbers). Initially what I did was to rename the table with the respective vision values for each column. Then I realized that if I made the dataframe to be the output of the simulation function it would be better. I moved the data frame code up to the replication function, asking to give the output as.data.frame and this made the names of the columns to be the vision values, just like I wanted. 
+
+In general, I had to test everything with fewer ticks and replicates (I tested with 10 and 20 ticks, and 3-5 replicates instead of 10) because otherwise my computer would crash. I even left it running overnight trying to knit and get the markdown file, but in the morning when I checked it seemed like my computer was going to explode. So I decided to leave it without kniting. 
+
+__________
+####APRIL 1, 2014
+
+Today I worked on the Netlogo part of the homework (Question 4).
+
+I realized was stupid last week... when I did the rsystemcheck last week, I thought it was working because I didn't get an error message (which was what I was getting before). However, I didn't realize that the R_HOME and the JRI_HOME had "null" values (hitting myself against a wall when it happened!!!). I tried downloading Java again, repeating the terminal and alternative methods to setup the environment, but it wouldn't work. I downloaded Java again, to make sure that I downloaded the 64-bit version and not the 32-bit, but again it wouldn't work...!!! (even after restarting, logging off, turning off the computer...). Therefore, my R extension never worked in my computer... :-(
+
+I realized this pretty close to the assignment deadline so I decided to go ahead and do the coding part trusting that it would work. I used the r primitives for Netlogo that we learned last time and from NetLogo-R-Extension website (using mostly the r:eval primitive and the r:put primitive to create new variables). I realized that to be able to call that new variable, I had to have it in my global variables to be able to use it in the procedure (I could've also used let instead of set...). Given that I couldn't really check whether the code was working in my computer, I checked my code by comparing it with one of my classmate's code, and it seemed pretty similar. The only problem I had was that I wasn't extracting any specific information from MySQL, so I had to add that I wanted to SELECT the average deviation of flockmates FLOM my flockingresults table, and then use that for question 4. Again, I couldn't really test whether this worked given my problem with Java (which I hope to fix soon), but looking at the code it makes sense so I really hope it works.
+
+_______
+#### APRIL 2, 2014 - Problem with RStudio code/MySQL Tables
+
+Today I realized that I have a problem in the homework I posted yesterday. I went to MySQL website and looked at the flockingresults table, and realized that I only had one line of data, which I'm not sure why this happened, but I think it is because in my code for the simulation function, I just have it to output the result for the first part of question 3, but for the other two parts of question 3 I have no code in my simulation to append the new output to the flockingresults table in MySQL. However, I don't really know whether this is what happened because when I print my tables, they show different results in RStudio...
+
+__________
+####APRIL 2, 2014 - Thoughts from the readings...
+
+The Evers et al. (2012) paper is interesting because it involves vigilance. It could be tweaked or applied not only to groups that have dominants and subordinates, but it would be interesting to se how social dynamics and movement pattern change for example while spider monkeys or other primates are doing territorial boundary patrols or deep incursions, and seeing how this vigilance behaviors change in those specific contexts... or even for the spider monkeys it would be really cool how this model is applied when they visit the salt licks!
+
+I've always thought that it would be really interesting to do apply a decision making model to spider monkeys and their visits to the salt licks.Proyecto primates has enough data to design a good model to predict when the monkeys are going to visit the salt lick, and there has to be some sort of consensus decision making to decide whether they are going to go down and feed from the lick or not. It would be cool to model this perhaps to determine whether spider monkeys going down to feed from the lick is actually reflecting any consensus decision making or whether it is one individual who dares to go and then the others follow along.
+
+The GrooFiWorld from Puga-Gonzalez et al. (2009) could be useful if I even want to do something with ABSMs and sakis. SAkis have a lot of grooming, so it would be cool to see how the emergent patterns of social affiliation in sakis differs from that of macaques. Moreover, in sakis it would be cool to compare with the titis, to see if parental care is actually playing any role in the affiliation patterns, given that titis have strong paternal care while sakis don't. 
+
+
+_______
+#### APRIL 2, 2014 - Class notes
+
+######Today - COOPERATION AND COLLECTIVE ACTION: Prisoner's dilemma model 
+
+Cooperation as a strategy cannot infect a population of defectors. But a population of cooperators CAN be invaded by defectors. Defect as a strategy can invade but can't be invaded --> evolutionary stable strategy is to defect. 
+
+But, cooperative behaviors over a long term can have a better payoff than being defector. Tit-for-tat strategy: On the first round of an encounter you cooperate on the first time. And then on subsequent encounter with that same individual, you mimic their behavior on the previous encounter. In the long term this coopearative behavior has a better payoff. 
+
+website: www.christopherxjjensen.com/Easy-IPD/IPD_Tournament.swf
+
+_________________________ 
+#### APRIL 7-11 
+
+AAPA craziness. I was worried about trying to finish up the presentation and totally blanked out about doing the digital journal (to be honest I didn't really think we had to do it this week, but I saw afterwards and saw that we had to). Oops! :-( 
+
+__________________________
+#### APRIL 15, 2014 - Working on Dominance interactions on the PTM model
+
+I thought of using Hemelrijk's dominance model (from the modified version on the model that I found on Open ABM and includes feeding - by Sean Barton), but I thought it would be simpler to have males interacting if they enter each other's territory, without estimating the other male's dominance value. I though a good way to set up the interaction was to assign a winning probability of 0.8 to the male with highest dominance value in the interaction, and a winning probability of 0.2 to the male with the least dominance value in the interaction. (In the future I could make this more complex by assigning different winning probabilities depending on the specific dominance values the males have at the moment of the interaction). To setup the interaction what I did was to randomize a number between 0 and 0.8 for the dominant one, and then randomize a number between 0 and 0.2 for the least dominant one, and the agent with highest resulting dominance is the winner. Then the winner will be assigned with the dominance value of the more dominant male in the interaction, and the loser will take the dominance value of the least dominant male in the interaction.
+
+To do this what I did was to make unhappy males to go any patch that had enough resources (more than the male resource threshold) and if the patch is occupied, then there would be a dominance "fight" (i.e. intra-male interaction). To verify that these interactions were actually working I made the males who were losers to turn its color to yellow, and then look at the probabilities for each of the two males in the patch and corroborate that the one that turned yellow was actually the male with lowest probability-win value. To avoid several males being yellow all the time, I included a like at the beginning of my go procedure to set all males to be blue again. Therefore, what I will see is males "blinking" yellow (reflecting that there are dominance interactions going on) but then turning back to blue. 
+
+When I ran this I was having problems with some males (I assume the ones with lowest dominance) to have no patches to go to. This is because this male did not find a patch that had enough resources to fulfill its minimum resource threshold. One option in this case would be to always have a lot of trees, but I would also like to test the model when resources are low. Therefore, I decided that a good option would be to make males that can't find a patch to DISPERSE outside of the would, mimicking that a male would have to go farther away if it can't find a proper patch with enough resources and if this males can't win over the other males in the world. In this case, to mimic the fact that a male disperses outside the world, the easiest thing is to make him disappear out of the world, which in Netlogo language, it means that I have make that male "die".
+
+The problem here is a struggled on when should I make the males die, because I ask them to move first and then interact if not happy. I can't kill them before they move... (that would be unfair with the poor lower ranking males). And this can only happen after the males have the dominance interaction, given that lower ranking males can outcompete higher ranking males. 
+
+After struggling with this problem, I realized that this was not the error. The error was that I was not assigning the patch-energy, therefore, some patches did not have any patch-energy to be compared with the males' min-resource-threshold. Although the dispersal idea above is a good idea, it doesn't really make sense in this case because I'm asking males to go to any patch that has enough resources, regardless of whether there is a male on it or not. Then, if there is a male, they engage in a dominance interaction... but in theory there should always be patches with available resources, otherwise all males would be dead. 
+
+I also played a bit with the size of the agents. For males I assigned size according to their current dominance values, so males that have higher dominance are larger, and males that have lower dominance values are smaller.  
+
+
+__________
+#### APRIL 15, 2014 - Working on females hatching babies on the PTM model
+
+To male females reproduce I basically had them hatching infants when females reach the energy needed for reproduction, which is set in the interface. Initially I had this value at 30, then I had it to change since I have my females start with an energy value of 100. Infants move with their moms until they read a dispersal age. One could change dispersal age depending on whether the species is precocial (early dispersal age) or atricial (later dispersal age), which could apply both for birds and mammals.
+
+To determine whether infants become male or female, I am not assigning sex until they reach their age of dispersal. Initially I thought I could make a list of breeds (a list that had males and females as breeds), but couldn't do it. What I did instead was to assign a random integer (0 or 1) to the infant. If it was 1 it resulted being a male, otherwise it was a female. 
+
+I was going to code how to make infants move. However, I first need to create links between the mother and the infant, because I want infants to follow their mothers until they reach age of dispersal. 
+
+I still don't know whether I should make infants forage or not, or wait until they become adults to forage and use resources in the patches. It makes sense to make them forage since the whole point of the PTM is to select males that can provide enough resources for the females' offspring to survive... 
+
+IMPORTANT: if I want females to lose energy when they reproduce, I have to put this line of code before they hatch the infants. Otherwise, if will say that infants do not own female-energy. 
 
 
 
