@@ -28,7 +28,7 @@ infants-own [
   mother-ID ; to create links
   father-ID ; to create links
   ;sex ---> set later when they become adults 
-  ;infant-energy --> still don't know whether they should forage or not. if not, it makes no sense giving them energy.
+  ;infant-energy ;--> still don't know whether they should forage or not. if not, it makes no sense giving them energy.
   ;death-threshold
   age
   age-dispersal]
@@ -202,7 +202,7 @@ to move
   unhappy-males-seek
 end
   
-;;;;CHECK VARIABLES;;;;
+;;;;;;;; CHECK VARIABLES ;;;;;;;;
 
 to check-patches
    ask patches [
@@ -245,7 +245,7 @@ to check-male-happiness
 end
 
 
-;; FEMALES MOVE  
+;;;;;;;;; FEMALES MOVE ;;;;;;;;; 
 
 to happy-females-forage
   ask females with [female-happy? = true] [
@@ -277,7 +277,7 @@ to female-find-new-patch
 end
 
 
-;; MALES MOVE
+;;;;;;;;; MALES MOVE ;;;;;;;;;;
 
 to happy-males-forage
   ask males with [male-happy? = true] [
@@ -308,13 +308,58 @@ to male-find-new-patch
 end
 
 to dominance-interaction
-  ask males-here with-max [dominance] [set probability-win random-float 0.8]
-  ask males-here with-min [dominance] [set probability-win random-float 0.2]
+  ;ask males-here with-max [dominance] [set probability-win random-float 0.8]
+  ;ask males-here with-min [dominance] [set probability-win random-float 0.2]
   ;;ask males-here with-min [probability-win] [male-find-new-patch set size 5 set color "yellow"]
-  ask males-here with-min [probability-win] [set color yellow male-find-new-patch]
+  ;ask males-here with-min [probability-win] [set color yellow male-find-new-patch]
+  if random-float 1 < 0.2 [ask males-here with-min [dominance] [set color yellow male-find-new-patch]]
+end
+
+to females-reproduce
+  ask females [
+    let mom who
+    if female-energy >= energy-to-reproduce
+    [ set female-energy female-energy - energy-to-reproduce
+      hatch 1
+      ; user-message mom
+      set breed infants
+      set color magenta
+      set age 0
+      ;set mother-ID who of females-here
+      ;set infant-energy 20
+      set size 0.15
+      create-links-with males-here
+    ]
+  ]
+end
+
+;;;;;; INFANT BEHAVIOR ;;;;;;;;
+      
+to infants-move
+  ;ask infants [
+   ; follow 
+  ;; move on same cell as mother.
+  ;; every tick they increase their age by 1
+  ;; lose energy every tick
+  ;; if infant-energy < death-threshold [die]
+  ;; when they reach an age of dispersal, they become adults [breed males] or [breed females]
+  ;; infants [disperse]
+  ;; if infant dies [mother leaves territory and seeks new territory females-seek]
+end
+
+to infants-grow ; and disperse
+  ask infants [
+    if age >= age-of-dispersal
+    [let sex random 1
+      ifelse sex = 1
+      [set breed males]
+      [set breed females]
+    ]
+  ]
 end
 
 
+;;;;;;;;;; TREE DYNAMICS ;;;;;;;;;;;
 
 to trees-fade
   ask trees [
@@ -334,6 +379,9 @@ to regrow-trees
   ] 
 end
 
+
+;;;;;;;;;; AGENTS DIE ;;;;;;;;;;;
+
 to females-die
   ask females [
     if female-energy <= 0
@@ -347,41 +395,15 @@ to males-die
   [die]
   ]
 end
+
+;to infants-die
+ ; ask infants [
+    ;if infant-energy <= 0
+  ;[die]
+  ;]
+;end
   
-to females-reproduce
-  ask females [
-    if female-energy >= energy-to-reproduce
-    [ set female-energy female-energy - energy-to-reproduce
-      hatch 1
-      set breed infants
-      set color magenta
-      set age 0
-      set size 0.15
-    ]
-  ]
-end
 
-      
-to infants-move
-  ;; move on same cell as mother.
-  ;; every tick they increase their age by 1
-  ;; lose energy every tick
-  ;; if infant-energy < death-threshold [die]
-  ;; when they reach an age of dispersal, they become adults [breed males] or [breed females]
-  ;; infants [disperse]
-  ;; if infant dies [mother leaves territory and seeks new territory females-seek]
-end
-
-to infants-grow ; and disperse
-  ask infants [
-    if age-dispersal >= age-of-dispersal
-    [let sex random 1
-      ifelse sex = 1
-      [set breed males]
-      [set breed females]
-    ]
-  ]
-end
 
 
 
@@ -575,7 +597,7 @@ initial-males
 initial-males
 0
 100
-20
+24
 1
 1
 NIL
@@ -795,7 +817,7 @@ age-of-dispersal
 age-of-dispersal
 0
 100
-50
+1
 1
 1
 NIL
