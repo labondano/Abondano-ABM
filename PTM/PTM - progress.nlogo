@@ -16,6 +16,7 @@ males-own [
   male-happy?
   ;;parental-care???
   probability-win
+  offspring-sired
   ;win
   ]
 females-own [
@@ -23,14 +24,16 @@ females-own [
   female-happy?
   female-energy
   ;fertility-threshold ---> its already on the interface so its setup as a global. therefore, no need to have it here?
-  female-min-resource-threshold]
+  female-min-resource-threshold
+  female-ID]
 infants-own [
+  infant-ID
   mother-ID ; to create links
   father-ID ; to create links
   ;sex ---> set later when they become adults 
   ;infant-energy ;--> still don't know whether they should forage or not. if not, it makes no sense giving them energy.
   ;death-threshold
-  age
+  infant-age
   age-dispersal]
 
 trees-own [
@@ -111,6 +114,7 @@ to setup
    ;set subordinate-value random-float 1
    set male-energy 100
    set dominance random-float 1
+   set offspring-sired [] ;; an empty list to insert the IDs on infants sired
   ]
 
   let i initial-males
@@ -180,11 +184,12 @@ to go
   move
   trees-fade
   regrow-trees
-  females-die
-  males-die
+  ;females-die
+  ;males-die
   females-reproduce
-  infants-grow
-  infants-move
+  infants-disperse
+  ;infants-grow
+  ;infants-move
   tick
   do-plot1
   do-plot2
@@ -273,11 +278,12 @@ to unhappy-females-seek
 end
 
 to female-find-new-patch
-  move-to max-one-of patches with [occupied? = true and number-trees > female-min-resources] [number-trees]
+  move-to max-one-of patches with [occupied? = true][patch-energy] ;; NEED TO ADD THAT FEMALES GO ONLY IF THE TERRITORY QUALITY IS ENOUGH WHEN SHE COMES IN
+  ;move-to max-one-of patches with [occupied? = true and number-trees > female-min-resources] [number-trees]
 end
 
 
-to female-find-new-patch2 ;; really bad coding, very non-efficient way of looping - looks up to radius 4 neighborhoods
+to female-find-new-patch2 ;; really bad coding,  non-efficient way of looping - looks up to radius 4 neighborhoods
   ifelse any? patches in-radius female-vision-radius with [occupied? = true and number-trees > female-min-resources] 
   [move-to max-one-of patches in-radius female-vision-radius with [occupied? = true] [number-trees]]
   [let i female-vision-radius + 1
@@ -305,7 +311,7 @@ to female-find-new-patch3
   set i 1
   show i
   ;set j item i female-vision 
-  ifelse any? patches in-radius i with [occupied? = true and number-trees > female-min-resources] [  
+  ifelse any? patches in-radius i with [occupied? = true and patch-energy > female-min-resources] [  
   move-to max-one-of patches in-radius i with [occupied? = true] [number-trees]
   ] [
   set i i + 1]
@@ -360,23 +366,31 @@ end
 
 to females-reproduce
   ask females [
-    let mom who
+    let mom who 
     if female-energy >= energy-to-reproduce
     [ set female-energy female-energy - energy-to-reproduce
-      hatch 1
-      ; user-message mom
-      set breed infants
+      hatch-infants 1 [
+      ;set breed infants
+      set infant-ID who
       set color magenta
-      set age 0
+      set shape "bird side"
+      set size 0.18
+      set infant-age 0
+      set mother-ID mom
+      ;set father-ID [who] of males-here with [color = blue] --> this is if I want kids to have the number of father-ID. Not really necessary. 
       ;set mother-ID who of females-here
       ;set infant-energy 20
-      set size 0.15
-      create-links-with males-here
+      create-links-with males-here with [color = blue]
+      ;ask female mom [create-link-to infant infant-ID [tie]]
+      create-link-with female mom [tie]
+      let infant-sired infant-ID
+      ask males-here with [color = blue] [set offspring-sired lput infant-sired offspring-sired]
+      ]
     ]
   ]
 end
 
-;;;;;; INFANT BEHAVIOR ;;;;;;;;
+;;;;;; INFANTS BEHAVIOR ;;;;;;;;
       
 to infants-move
   ;ask infants [
@@ -390,13 +404,33 @@ to infants-move
   ;; if infant dies [mother leaves territory and seeks new territory females-seek]
 end
 
+to infants-disperse
+  ask infants [
+    set infant-age infant-age + 1
+    if infant-age >= age-of-dispersal 
+    [die]
+    ;[set hidden? true
+     ;ask my-links [untie set hidden? true]]
+  ]
+end
+
 to infants-grow ; and disperse
   ask infants [
-    if age >= age-of-dispersal
-    [let sex random 1
+    set infant-age infant-age + 1
+    if infant-age >= age-of-dispersal
+    [ ask my-links [untie set hidden? true]  
+      let sex random 2 ;; it has to be 2, not 1, so it picks either 0 or 1. I had it before as random 1, but the outcome was always 0.
       ifelse sex = 1
-      [set breed males]
-      [set breed females]
+      [set breed males
+        set shape "bird side"
+        set color green
+        set male-energy 100
+        set dominance random-float 1
+        set size dominance]
+      [set breed females
+        set shape "bird side"
+        set color red
+        set female-energy 100]
     ]
   ]
 end
@@ -640,7 +674,7 @@ initial-males
 initial-males
 0
 100
-24
+8
 1
 1
 NIL
@@ -655,7 +689,7 @@ initial-females
 initial-females
 0
 100
-20
+26
 1
 1
 NIL
@@ -754,7 +788,7 @@ energy-to-reproduce
 energy-to-reproduce
 100
 300
-120
+104
 1
 1
 NIL
@@ -860,7 +894,7 @@ age-of-dispersal
 age-of-dispersal
 0
 100
-1
+10
 1
 1
 NIL

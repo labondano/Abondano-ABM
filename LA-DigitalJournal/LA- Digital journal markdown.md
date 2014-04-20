@@ -845,9 +845,51 @@ I did this but the problem was that sometimes there would be no patch with the f
 When I gave up on trying to do the loop, I started playing with the size of the males. I noticed that larger males were actually the ones with higher rank, but this meant that they had the lowest dominance values. So I changed this too. I'm still having problems trying to come up with the proper equation son that large males don't look huge, and small males don't look so tiny that they become invisible to human's eye. After trying a lot of different combinations, I decided that the one that was bettwe was simply to assign the size according to the dominance values. 
 
 ________
-#### April 20, 2014 - Continue working on my model...  agents die, mom-kid links and preliminary graphs
+#### April 20, 2014 - Continue working on my model...  fixing PTM loop, mom-kid links, agents die, and preliminary graphs
+
+**Fixing the loop for females to assess territory quality**
 
 I decided that the easiest way to fix the problem with the loop from yesterday, was simply to stick to what Tony said initially, which is to stick to the simplest form of the PTM: have females evaluate ALL territories in the world and then choose to move to the one with maximum resources available, as long as they meet their minimum resource threshold. 
+
+**Mom-kid links**
+
+In this model I have the offspring moving along with their moms until they reach age of dispersal, which is when they become adults and change their breed to be either male or female. Tony and I were trying to create links between mom and offspring, but another option is to use the tie/untie command. 
+
+I think I got it. I think all we were missing with Tony was to put a bracket after hatching the babies. Without the bracket we would still be under the 'Ask females' command. Therefore, I had to include a bracket after hatch-infants to assign all the values for the infants. 
+
+In the example from the Netlogo directory they ise create-link-to. I don't understand the difference between create-link-to and create-link-with.
+
+	to females-reproduce
+  		ask females [
+    		let mom who 
+    		if female-energy >= energy-to-reproduce
+    		[ set female-energy female-energy - energy-to-reproduce
+     		hatch-infants 1 [
+      			set infant-ID who
+      			set color magenta
+      			set age 0
+      			set mother-ID mom
+      			set size 0.15
+      			create-links-with males-here with [color = blue]
+      			create-link-with female mom [tie]
+      			]
+    	  	]
+  		]
+	end
+
+**Kids grow and disperse, and get "stored" in the males' list of offspring**
+
+When offspring reach a certain age of dispersal (setup in the GUI as a slider) they become either a male of a female.
+
+It was getting very complicated. I think the simplest option is to simply have kids dispersing out of the world when they reach certain age (instead of kids trying to win over their fathers and other resident males). In order to keep track of the amount of kids that each male sires, I created a list that males-own, which is called offspring-sired. At the beginning of the model this list is empty, but as kids are sired, the list starts filling up. To achieve this, I inserted the following lines at the end of the females-reproduce procedure:
+
+      let infant-sired infant-ID
+      ask males-here with [color = blue] [set offspring-sired lput infant-		sired offspring-sired]
+
+
+When kids reach a certain age-of-dispersal, they die in the model, simulating that they disperse outside the world. When they die, the links are broken but their IDs stay stored in the males' offspring-sired list.
+
+Given that I changed my model so that kids disperse out of the world, I decided that there was no need to "kill" males and females in the world, but instead it would be better to keep them constant and simply see how the dynamics between polygynous vs. monogamous territories change with different amount of resources available. 
 
 
 
