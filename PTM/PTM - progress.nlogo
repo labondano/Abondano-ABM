@@ -108,23 +108,27 @@ to setup
   create-males initial-males [
    set shape "bird side"
    set color blue
-   set dominance random-float 1
-      set size 0.2 * (dominance * 3) ;; size of males according to their dominance values
+   ;set subordinate-value random-float 1
    set male-energy 100
+   set dominance random-float 1
   ]
-    let i 1
+
+  let i initial-males
   foreach sort-on [dominance] males [
-    ask ? [set rank i set i i + 1]
+    ;ask ? [set rank i set i i + 1]
+    ask ? [set rank i set i i - 1]
   ] 
   
   ;; position males with highest dominance values to patches with highest number of resources
+
   foreach sort-on [rank] males [
     ask ? [
       male-find-patch 
       ask patch-here [set occupied? true]
       ]
   ]
-
+  
+ ask males [set size dominance]  ;; size of males according to their dominance values
 
 ; Create females
  create-females initial-females
@@ -255,7 +259,8 @@ to happy-females-forage
   set tree-energy tree-energy - 1 ]
   set female-energy female-energy + 1  
   ]
-  [female-find-new-patch]
+  [female-find-new-patch
+   set female-energy female-energy - 1]
   ]
 end
 
@@ -263,16 +268,54 @@ to unhappy-females-seek
   ask females with [female-happy? = false] [
   female-find-new-patch
   check-female-happiness
+  set female-energy female-energy - 1
   ]
 end
 
 to female-find-new-patch
-  ;rt random-float 360
-  ;fd random-float 50
-  move-to one-of patches with [occupied? = true]
-  set female-energy female-energy - 1
-  if not any? males-here
-  [female-find-new-patch]
+  move-to max-one-of patches with [occupied? = true and number-trees > female-min-resources] [number-trees]
+end
+
+
+to female-find-new-patch2 ;; really bad coding, very non-efficient way of looping - looks up to radius 4 neighborhoods
+  ifelse any? patches in-radius female-vision-radius with [occupied? = true and number-trees > female-min-resources] 
+  [move-to max-one-of patches in-radius female-vision-radius with [occupied? = true] [number-trees]]
+  [let i female-vision-radius + 1
+    ifelse any? patches in-radius i with [occupied? = true and number-trees > female-min-resources]
+    [move-to max-one-of patches in-radius i with [occupied? = true] [number-trees]]  
+    [let j i + 1
+    ifelse any? patches in-radius j with [occupied? = true and number-trees > female-min-resources]
+    [move-to max-one-of patches in-radius j with [occupied? = true] [number-trees]]
+    [let k j + 1
+    ifelse any? patches in-radius k with [occupied? = true and number-trees > female-min-resources]
+    [move-to max-one-of patches in-radius k with [occupied? = true] [number-trees]]
+    [die]
+    ]
+  ]
+  ]
+end
+
+
+to female-find-new-patch3
+  let female-vision [1 2 3 4 5]
+  let i 0
+  ;let j 0
+  while [i <= last female-vision] [ 
+  ;set i item i female-vision
+  set i 1
+  show i
+  ;set j item i female-vision 
+  ifelse any? patches in-radius i with [occupied? = true and number-trees > female-min-resources] [  
+  move-to max-one-of patches in-radius i with [occupied? = true] [number-trees]
+  ] [
+  set i i + 1]
+  ]
+  
+  ;check-female-happiness
+  ;if female-happy? = false [female-find-new-patch]
+  ;set female-energy female-energy - 1 --> removed this from here because I think it was making females lose more energy on one single tick
+  ;if not any? males-here
+  ;[female-find-new-patch]
   ;move-to one-of patches with [occupied? = true]
 end
 
@@ -312,7 +355,7 @@ to dominance-interaction
   ;ask males-here with-min [dominance] [set probability-win random-float 0.2]
   ;;ask males-here with-min [probability-win] [male-find-new-patch set size 5 set color "yellow"]
   ;ask males-here with-min [probability-win] [set color yellow male-find-new-patch]
-  if random-float 1 < 0.2 [ask males-here with-min [dominance] [set color yellow male-find-new-patch]]
+  if random-float 1 < prob-subordinate-win [ask males-here with-min [dominance] [set color yellow male-find-new-patch]] 
 end
 
 to females-reproduce
@@ -537,7 +580,7 @@ initial-trees
 initial-trees
 0
 500
-277
+226
 1
 1
 NIL
@@ -681,7 +724,7 @@ female-min-resources
 female-min-resources
 0
 5
-1
+0.5
 0.5
 1
 NIL
@@ -696,7 +739,7 @@ male-min-resources
 male-min-resources
 0
 5
-1
+0.4
 0.2
 1
 NIL
@@ -729,10 +772,10 @@ count trees with [color = red]
 11
 
 PLOT
-41
-478
-1184
-628
+961
+21
+1219
+175
 mono-vs-poly
 ticks
 percent
@@ -759,10 +802,10 @@ MONITOR
 11
 
 PLOT
-43
-646
-1187
-796
+961
+185
+1219
+351
 resources for females
 ticks
 count
@@ -779,10 +822,10 @@ PENS
 "trees-per-female" 1.0 0 -12087248 true "" ""
 
 PLOT
-42
-815
-1187
-965
+960
+357
+1219
+506
 sex ratio of poly-groups
 ticks
 count
@@ -800,7 +843,7 @@ PENS
 MONITOR
 831
 78
-1063
+938
 123
 NIL
 count females
@@ -844,6 +887,36 @@ MONITOR
 17
 1
 11
+
+SLIDER
+8
+414
+201
+447
+prob-subordinate-win
+prob-subordinate-win
+0
+1
+0.2
+0.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+9
+460
+193
+493
+female-vision-radius
+female-vision-radius
+0
+5
+1
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

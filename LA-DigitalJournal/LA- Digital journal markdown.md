@@ -801,6 +801,57 @@ Basic process:
 A good primitive for gis is using the gis:contained-by? primitive (see code done in class).
 
 __________________________________
+#### APRIL 19, 2014 - Working on Tony's suggestions
+
+After talking to Tony, he suggested the following:
+
+1) Create a slider that has the probability of a subordinate male winning in a dominance interaction. We modified the code which previously it was:
+
+		to dominance-interaction
+  		ask males-here with-max [dominance] [set probability-win random-		float 0.8]
+  		ask males-here with-min [dominance] [set probability-win random-		float 0.2]
+  		ask males-here with-min [probability-win] [set color yellow male-		find-new-patch]
+		end
+
+Tony said that this wasn't actually assigning probabilities of 0.8 and 0.2, so he helped me to simplify and modify my code and it ended up being:
+
+		to-dominance-interaction
+  		if random-float 1 < prob-subordinate-win [ask males-here with-min 		[dominance] [set color yellow male-find-new-patch]]
+  		end
+
+I created a slider for assigning the probability of a subordinate winning over a dominant male in an interaction (when a male is trying to find a new patch and encounters a patch that is already occupied). The slider is prob-subordinate-win which ranges from 0 to 1. 
+
+2) The other issue Tony pointed out was that my model wasn't really doing what the Polygyny threshold model is. How I have my model right now is having females to move to any other patch that meets their minimum resource threshold. However, what the PTM proposes is that females evaluate the territories and then they move to the territory with best quality. To achieve this Tony proposed to have females evaluate the surrounding territories and from those pick the territory with better quality. To do this I will set up a slider that has the vision-radius for females. Females will evaluate their surrounding territories and then pick the best one (that has a male and that has more resources available). 
+
+		to-female-find-new-patch
+		move-to max-one-of patches in-radius female-vision-radius with		[occupied? = true] [number-trees]
+		end
+
+I did this but the problem was that sometimes there would be no patch with the females' requirements: to be occupied by a male and have enough resources that meet her minimum resource threshold. So what I think I need to do is to create something similar to a loop where females check patches in-radius 1, then in-radius 2, and so on. I think what I need to do is something with the 'while' command. I really tried to create this while loop but I doubt my model is doing what I want it to do. I've been trying for a long time already, so I will move on and get back to this again later. This is what I have so far... but again, I don't think this is working:
+
+	to female-find-new-patch
+  	let female-vision [1 2 3 4 5 6]
+  	let i 0
+	while [i < last female-vision] [ 
+  	set i item i female-vision
+  	show i
+  	ifelse any? patches in-radius i with [occupied? = true and number-trees 	> female-min-resources] [  
+  	move-to max-one-of patches in-radius i with [occupied? = true] [number-	trees]
+  	] [
+  	set i i + 1]
+  	]
+  	end
+  	
+When I gave up on trying to do the loop, I started playing with the size of the males. I noticed that larger males were actually the ones with higher rank, but this meant that they had the lowest dominance values. So I changed this too. I'm still having problems trying to come up with the proper equation son that large males don't look huge, and small males don't look so tiny that they become invisible to human's eye. After trying a lot of different combinations, I decided that the one that was bettwe was simply to assign the size according to the dominance values. 
+
+________
+#### April 20, 2014 - Continue working on my model...  agents die, mom-kid links and preliminary graphs
+
+I decided that the easiest way to fix the problem with the loop from yesterday, was simply to stick to what Tony said initially, which is to stick to the simplest form of the PTM: have females evaluate ALL territories in the world and then choose to move to the one with maximum resources available, as long as they meet their minimum resource threshold. 
+
+
+
+
 
 
  
