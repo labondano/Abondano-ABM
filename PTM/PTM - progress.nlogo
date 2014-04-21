@@ -61,8 +61,9 @@ to setup
   ;set group-sizes [] ; An empty list
   
 ;; World dimensions
-  ;world-width 5
-  ;world-height 5
+  resize-world 0 (x-num-territories - 1) 0 (y-num-territories - 1)
+  ;set world-width 5
+  ;set world-height 5
   
 ;; Shade the patches
   ask patches [set pcolor green - 3]
@@ -132,7 +133,11 @@ to setup
       ]
   ]
   
- ask males [set size dominance]  ;; size of males according to their dominance values
+ ask males [  ;; size of males according to their dominance values. 
+   ifelse dominance < 0.15
+   [set size 0.15] ;; if they are smaller than 0.15 its very hard to see. So males with dominance values < 0.15 will be of size 0.15
+   [set size dominance]  ;;; otherwise, if their dominance is > 0.15, their size will be the value of their dominance. 
+ ]
 
 ; Create females
  create-females initial-females
@@ -226,7 +231,8 @@ end
 
 to check-trees
   if not any? trees with [color = red]
-  [stop]
+  [user-message (word "No trees left. ")
+  stop]
 end
 
 to check-occupied-patches
@@ -239,7 +245,8 @@ end
 
 to check-female-happiness
   ask females [
-  ifelse any? males-here and ((count trees-here / (count females-here + count males-here)) >= female-min-resources) 
+    ifelse any? males-here and ((patch-energy / (count females-here + count males-here)) >= female-min-resources) 
+  ;ifelse any? males-here and ((count trees-here / (count females-here + count males-here)) >= female-min-resources) 
         [set female-happy? true]
         [set female-happy? false]
   ]
@@ -247,10 +254,13 @@ end
 
 to check-male-happiness
   ask males [
-    ifelse ((count trees-here / (count females-here + count males-here)) >= male-min-resources) and (not any? other males-here)
+    ifelse ((patch-energy / (count females-here + count males-here)) >= male-min-resources) and (not any? other males-here)
       [set male-happy? true]
       [set male-happy? false]
   ]
+end
+
+to check-territory-quality
 end
 
 
@@ -258,27 +268,34 @@ end
 
 to happy-females-forage
   ask females with [female-happy? = true] [
-  ifelse any? trees-here with [color = red] [
+  if any? trees-here with [color = red] [
   move-to min-one-of trees with [color = red] [distance myself] 
   ask min-one-of trees [distance myself] [
   set tree-energy tree-energy - 1 ]
-  set female-energy female-energy + 1  
-  ]
-  [female-find-new-patch
-   set female-energy female-energy - 1]
+  set female-energy female-energy + 1]
+  ;[female-find-new-patch
+   ;set female-energy female-energy - 1]
+   ;[set female-happy? false
+    ; unhappy-females-seek]
   ]
 end
+
+
 
 to unhappy-females-seek
   ask females with [female-happy? = false] [
-  female-find-new-patch
-  check-female-happiness
-  set female-energy female-energy - 1
-  ]
+    ;while [female-happy? = false] [
+      female-find-new-patch
+      check-female-happiness
+      set female-energy female-energy - 1
+    ]
 end
 
 to female-find-new-patch
-  move-to max-one-of patches with [occupied? = true][patch-energy] ;; NEED TO ADD THAT FEMALES GO ONLY IF THE TERRITORY QUALITY IS ENOUGH WHEN SHE COMES IN
+  ifelse any? patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
+  [move-to max-one-of patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)][patch-energy]]
+  [die] ;; females disperse to find new territories. when they disperse, they die in the model. 
+  ;move-to max-one-of patches with [occupied? = true][patch-energy] ;; NEED TO ADD THAT FEMALES GO ONLY IF THE TERRITORY QUALITY IS ENOUGH WHEN SHE COMES IN
   ;move-to max-one-of patches with [occupied? = true and number-trees > female-min-resources] [number-trees]
 end
 
@@ -614,7 +631,7 @@ initial-trees
 initial-trees
 0
 500
-226
+51
 1
 1
 NIL
@@ -674,7 +691,7 @@ initial-males
 initial-males
 0
 100
-8
+25
 1
 1
 NIL
@@ -689,7 +706,7 @@ initial-females
 initial-females
 0
 100
-26
+76
 1
 1
 NIL

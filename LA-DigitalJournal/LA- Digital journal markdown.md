@@ -845,7 +845,7 @@ I did this but the problem was that sometimes there would be no patch with the f
 When I gave up on trying to do the loop, I started playing with the size of the males. I noticed that larger males were actually the ones with higher rank, but this meant that they had the lowest dominance values. So I changed this too. I'm still having problems trying to come up with the proper equation son that large males don't look huge, and small males don't look so tiny that they become invisible to human's eye. After trying a lot of different combinations, I decided that the one that was bettwe was simply to assign the size according to the dominance values. 
 
 ________
-#### April 20, 2014 - Continue working on my model...  fixing PTM loop, mom-kid links, agents die, and preliminary graphs
+#### APRIL 20, 2014 - Continue working on my PTM model...  fixing PTM loop, mom-kid links, agents die, and preliminary graphs... and more!
 
 **Fixing the loop for females to assess territory quality**
 
@@ -889,8 +889,58 @@ It was getting very complicated. I think the simplest option is to simply have k
 
 When kids reach a certain age-of-dispersal, they die in the model, simulating that they disperse outside the world. When they die, the links are broken but their IDs stay stored in the males' offspring-sired list.
 
+**Agents-die**
+
 Given that I changed my model so that kids disperse out of the world, I decided that there was no need to "kill" males and females in the world, but instead it would be better to keep them constant and simply see how the dynamics between polygynous vs. monogamous territories change with different amount of resources available. 
 
+**Resizing the world**
+
+SO EASY!!! At the beginning of the semester, I was trying to make the world change its dimensions depending on the sliders that I had set up on the GUI. However, I thought I had to use the world-width and world-height commands. I tried the resize-world command and it is super easy. All I had to do was specifi min and max x and y coordinates, and that's it! Yay! Now I can have larger/smaller worlds and see if this affects at all the outcome of monogamous vs. polygynous territories. I suspect it will definitely affect the outcome of trees being more or less evenly distributed (clumped or not), which might affect how many polygynous groups there are (it limits males' monopolizability of resources).
+
+**Again playing with males' size**
+
+It is annoying that I can't get small males to show up without having huge males taking all over the screen. So what I decided to do was to assign male size according to their dominance values, but for those males that dominance values are below 0.15, their size will be 0.15 so they can be visualized. 
+
+ 		ask males [  
+ 		   ifelse dominance < 0.15
+ 		   [set size 0.15]
+ 		   [set size dominance]
+ 		  ]
+
+
+**Correction on females assessing territory quality, including themselves**
+
+When I talked to Tony, he pointed out that females were assessing therritory quality simply by evaluating how many trees there were available to the current turtles, but did not assess if those were enough resources if she was included in the total amount of turtles. So I have to change this on my code. 
+
+First of all, when checking variables, I had to do some changes. I had that males and females were happy or unhappy depending on the amount of trees in the patch. The problem is that the number of trees does not indicate resource availability, because it also includes trees that have no energy. Therefore, I replaced number of trees by patch-energy (which is the total amount of energy from all the trees in the patch) in the following code:
+
+
+		to check-female-happiness
+		ask females [
+		ifelse any? males-here and ((patch-energy / (count females-here +
+		count males-here)) >= female-min-resources) 
+		;ifelse any? males-here and ((count trees-here / (count females-
+		here + count males-here)) >= female-min-resources) 
+        [set female-happy? true]
+        [set female-happy? false]
+         ]
+        end
+
+I don't understand why females are not gaining any energy when they "eat" from trees!!!?!?!?!?!
+
+
+So what I did is I modified the procedure for female-find-new-patch. Each female evaluates whether there are patches with a male and with enough resources for them. If that is true, they move towards the patch with highest patch-energy available. If there are no patches with those requirements, the female dies in the model, representing a female that dispersed outside the world to look for more ther patches that fulfill her female-min-resources. 
+
+	to female-find-new-patch
+		ifelse any? patches with [occupied? = true and ((patch-energy / 
+		(count females-here + 1 + count males-here)) >= female-min-
+		resources)]
+		[move-to max-one-of patches with [occupied? = true and ((patch-
+		energy /(count females-here + 1 + count males-here)) >= female-min-
+		resources)[patch-energy]]
+		[die] ;; females disperse to find new territories. when they
+		disperse,they die in the model. 
+  	end
 
 
 
