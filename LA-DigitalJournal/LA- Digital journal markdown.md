@@ -928,8 +928,38 @@ First of all, when checking variables, I had to do some changes. I had that male
 
 I don't understand why females are not gaining any energy when they "eat" from trees!!!?!?!?!?!
 
+I fixed this by removing the ifelse statement in happy-females-forage, and making it an if statement. 
 
-So what I did is I modified the procedure for female-find-new-patch. Each female evaluates whether there are patches with a male and with enough resources for them. If that is true, they move towards the patch with highest patch-energy available. If there are no patches with those requirements, the female dies in the model, representing a female that dispersed outside the world to look for more ther patches that fulfill her female-min-resources. 
+Before:
+
+		to happy-females-forage
+		ask females with [female-happy? = true] [
+			ifelse any? trees-here with [color = red] [
+			move-to min-one-of trees with [color = red] [distance myself] 
+			ask min-one-of trees [distance myself] [
+			set tree-energy tree-energy - 1 ]
+			set female-energy female-energy + 1]
+			[female-find-new-patch set female-energy female-energy - 1]
+		]
+		end
+		
+Now:
+
+		to happy-females-forage
+			ask females with [female-happy? = true] [
+			if any? trees-here with [color = red] [
+			move-to min-one-of trees with [color = red] [distance myself] 
+			ask min-one-of trees [distance myself] [
+			set tree-energy tree-energy - 1 ]
+			set female-energy female-energy + 1]
+			  ]
+			  end
+
+
+
+Back to females finding patches...
+
+What I did is I modified the procedure for female-find-new-patch. Each female evaluates whether there are patches with a male and with enough resources for them. If that is true, they move towards the patch with highest patch-energy available. If there are no patches with those requirements, the female dies in the model, representing a female that dispersed outside the world to look for more ther patches that fulfill her female-min-resources. 
 
 	to female-find-new-patch
 		ifelse any? patches with [occupied? = true and ((patch-energy / 
@@ -941,10 +971,57 @@ So what I did is I modified the procedure for female-find-new-patch. Each female
 		[die] ;; females disperse to find new territories. when they
 		disperse,they die in the model. 
   	end
+  	
+This will also be useful for showing the "carrying capapcity" of the number of females that the Netlogo world can carry, given the amount of trees/resources available. 
 
 
+________________
+####APRIL 21, 2014 - Problem: more than one male per patch, females reproducing with no males
 
+Now I'm having the problem that there is more than one male per patch. I believe this is shown before the dominance-interaction takes place. 
 
+Also... I had to change the dominance-interaction. 
+
+		to dominance-interaction
+		if random-float 1 > prob-subordinate-win [ask males-here with-min
+		[dominance] [set color yellow male-find-new-patch]] 
+		end
+		
+I had it as if random-float 1 < prob-subordinate-win, which meant that if subordinates won they would be the ones leaving the patch, which makes no sense. 
+
+**Energy values for males**
+
+Given that I'm no longer asking males or females to die because of low energy values, I removed the lines for increasing or decreasing male energy values when they move or when they forage. Same for females. Females only die when they don't find a patch so they are forced to disperse outside the world. 
+
+_____________________
+#### APRIL 22, 2014 - Trying to make graphs
+
+I've been trying to create bar graphs of the amount of the cumulative amount of kids sired by males, according to their rank. However, I'm having a hard time trying to create bar graphs changing the x-axis on Netlogo. I've been reading and what resembles more a bar graph is a histogram, however, what I want to do is not properly a histogram because I do not want my x-axis to be intervals. 
+
+______________________
+#### APRIL 22, 2014 - After talking to Tony...
+
+... he suggested the following:
+
+1. Instead of having males, females and infants being different breeds, have all of them to be turtles. That way I wouldn't be jumping into different turtle contexts, which is probably why I'm having two males in the same patch at the end of each tick (which is not supposed to happen). 
+2. Create the bar graph sending a dataframe to R and then having R plotting the data, instead of trying to do it directly in Netlogo (which we don't know if it is actually possible or not). It is definitely NOT a histogram... I'm not calculating frequency of data on a specific interval.
+3. If I don't do (1), I should reorganize my go procedure so that turtles are not doing several things at the same time, but instead that they follow a specific order. For doing that I should have something along the lines of:
+
+		to go
+		ask males [
+			bla 
+			bla 
+			bla]
+		ask females [
+			bla
+			bla
+			bla]
+		ask infants [
+			bla
+			bla]
+		end
+
+4. The other important thing Tony mentioned was that in the dominance-interactions, I would want males to be kicked out when they are losers, or males to kick out ALL OF THE OTHER MALES IN THE PATCH if they are winners. 
 
  
 
