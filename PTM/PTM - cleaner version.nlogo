@@ -127,7 +127,7 @@ to setup
     [ set shape "bird side"
       set size 0.3
       set color orange
-      set female-energy 100
+      set female-energy random 100
       setxy random-xcor random-ycor ;; females are not constrained to territories initially. They are wondering around until they get to establish in a male's territory.
       ifelse ((count trees-here / (count females-here + count males-here)) >= female-min-resources) and any? males-here
         [set female-happy? true]
@@ -217,61 +217,19 @@ to rep-success-plot
   sql:exec-direct (word "SELECT `number_offspring` FROM " table-name)
   let offspring sql:fetch-resultset
   sql:exec-direct (word "SELECT `male_rank` FROM " table-name)
-  ;sql:exec-direct (word "SELECT * FROM " table-name) 
-  ;let sire_offspring sql:fetch-resultset
   let sires sql:fetch-resultset
-  ;show sires
-  ;(r:put "sire_offspring" sire_offspring)
   (r:put "sires" sires)
   (r:eval "b<-as.vector(sires)")
-  ;(r:eval "sire <- do.call(rbind,sires)")
-  ;print r:get "sires"
-  ;(r:eval "sire2 <- as.data.frame(sires)")
   (r:put "offspring" offspring)
   (r:eval "a<- as.vector(offspring)")
-  ;(r:eval "num.offspring <- do.call(rbind,offspring)")
-  ;(r:eval "num.offspring2 <- t(num.offspring)")
-  ;print r:get "offspring"
-  ;(r:eval "num.offspring <- as.data.frame(offspring)") 
-  ;(r:eval "df1 <- data.frame(sires, offspring)")
-  ;print r:get "df1"
   (r:eval "df<-as.data.frame(cbind(b,a))")
   (r:eval "order.df<-df[order(as.numeric(df$b)) , ]")
   print r:get "order.df"
-  ;(r:eval "library(ggplot2)")
-  ;(r:eval "graph<- ggplot(df, aes(x = as.factor(b), y = a)) + geom_bar()")
-  ;print r:get "graph"
-  ;(r:eval "c<-barplot(, names.arg = b)")
-  ;(r:eval "df1 <- cbind(sire, num.offspring)")
   print r:get "b"
-  (r:eval "barplot(as.integer(order.df[,2]), names.arg = as.character(order.df$b))")
-  ;let df (r:get "df1")
-  ;show df
+  (r:eval "barplot(as.integer(order.df[,2]), names.arg = as.character(order.df$b), xlab = 'Male rank', ylab = 'Number of offspring sired', col = 'blue', main = 'Male reproductive success according to dominance rank')")
+
 end
   
-  
-to rep-success-plot2
-  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
-    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
-  sql:exec-direct (word "SELECT * FROM " table-name) 
-  let sire_offspring sql:fetch-resultset
-  (r:put "sire_offspring" sire_offspring)
-  ;(r:eval "test<-names(sire_offspring)")
-  ;let test (r:get "test")
-  ;show test
-  
-  (r:eval "df1<-as.data.frame(sire_offspring)")
-  (r:eval "df1<-t(df1)")
-  ;(r:eval "colnames(df1)<-c()")
-  ;(r:eval "newdf1<-sire_offspring[order[,1] , ]")
-  ;(r:eval "plot1 <- barplot(as.vector(sire_offspring[,2]))")
-  ;let graph (r:get "plot1")
-  let df (r:get "df1")
-  show df
-  ;print df
-  ;print graph
-end
- 
  
   
 ;;;;;;;; CHECK VARIABLES ;;;;;;;;
@@ -320,7 +278,7 @@ to females-move
   set female-energy female-energy + 1] 
   [ female-find-new-patch
     check-female-happiness
-    set female-energy female-energy - 1
+    ;set female-energy female-energy - 1
     ]
 end
 
@@ -359,7 +317,7 @@ to females-reproduce
   ask females [
     let mom who 
     if (any? males-here) and (female-energy >= energy-to-reproduce)
-    [ set female-energy female-energy - energy-to-reproduce
+    [ set female-energy female-energy - cost-offspring
       hatch-infants 1 [
       set infant-ID who
       set color magenta
@@ -473,7 +431,7 @@ GRAPHICS-WINDOW
 395
 14
 805
-445
+685
 -1
 -1
 80.0
@@ -489,9 +447,9 @@ GRAPHICS-WINDOW
 0
 4
 0
-4
-1
-1
+7
+0
+0
 1
 ticks
 30.0
@@ -522,7 +480,7 @@ initial-trees
 initial-trees
 0
 500
-392
+185
 1
 1
 NIL
@@ -552,7 +510,7 @@ y-num-territories
 y-num-territories
 0
 10
-5
+8
 1
 1
 NIL
@@ -582,7 +540,7 @@ initial-males
 initial-males
 0
 100
-23
+25
 1
 1
 NIL
@@ -597,7 +555,7 @@ initial-females
 initial-females
 0
 100
-59
+100
 1
 1
 NIL
@@ -666,7 +624,7 @@ female-min-resources
 female-min-resources
 0
 5
-5
+0.5
 0.5
 1
 NIL
@@ -694,9 +652,9 @@ SLIDER
 359
 energy-to-reproduce
 energy-to-reproduce
-100
-300
-104
+0
+200
+50
 1
 1
 NIL
@@ -880,7 +838,7 @@ INPUTBOX
 330
 79
 iterations
-1000
+100
 1
 0
 Number
@@ -895,6 +853,21 @@ create-figures
 0
 1
 -1000
+
+SLIDER
+10
+449
+182
+482
+cost-offspring
+cost-offspring
+0
+100
+20
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

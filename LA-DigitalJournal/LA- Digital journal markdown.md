@@ -999,7 +999,7 @@ _____________________
 I've been trying to create bar graphs of the amount of the cumulative amount of kids sired by males, according to their rank. However, I'm having a hard time trying to create bar graphs changing the x-axis on Netlogo. I've been reading and what resembles more a bar graph is a histogram, however, what I want to do is not properly a histogram because I do not want my x-axis to be intervals. 
 
 ______________________
-#### APRIL 22, 2014 - After talking to Tony...
+#### APRIL 22, 2014 - Talk with Tony...
 
 ... he suggested the following:
 
@@ -1021,7 +1021,36 @@ ______________________
 			bla]
 		end
 
-4. The other important thing Tony mentioned was that in the dominance-interactions, I would want males to be kicked out when they are losers, or males to kick out ALL OF THE OTHER MALES IN THE PATCH if they are winners. 
+4. The other important thing Tony mentioned was that in the dominance-interactions, I would want males to be kicked out when they are losers, or males to kick out ALL OF THE OTHER MALES IN THE PATCH if they are winners.
+5. For the graphs Tony suggested that the best thing would be to do the graphs in R, or having the data exported from Netlogo and then have R doing the barplot.
+
+_____________
+#### APRIL 22, 2014 - After talking to Tony...
+
+So I tried to have one single breed instead of multiple breeds for males, females and infants. However, I was getting a lot of errors and given the time constrains I thought it would be better just to stick to different breeds but having males do all the procedures 1st, then females, then infants (just like in point #3 from my previous digital journal entry). Doing this I am no longer having the problem of having more than one male on the same patch... so YAY!
+
+**Sire-offspring graph**
+
+Today I spent most of my afternoon and evening trying to make the barplot that has the males' rank on the x-axis and then the number of offspring sired on the y-axis. I got it to export to mySQL but then I was having a really hard time trying to get R to rad my data properly. I was able to create the data frame, but the barplot() function won't work. I don't get it to make a graph!!! I can print out the dataframe, but the barplot won't work (and when it did print something it looked very odd...). I tried using the as.vector function, but this wasn't working either. 
+
+__________________
+#### APRIL 23, 2014 - Got the dominance-offspring graph working!!! :-)
+
+Andrew helped me with my barplot() problem. All I had to do was to have my data to be numeric, using the as.numeric () function. Also I had to order the dataframe by rank, so I had male's rank ascending, rather than random (which is how the table is in MySQL). 
+
+While working on the SQL/R code in Netlogo, I was having problems on using quotation marks "" inside the r:eval or r:get commands, which sometimes you have to use in R. I got around with it, but don't know how to deal with this if I really have to use "" in the future. For example, I've been trying to put the labels on the graphs, but those have to go in "" when you do it in R. So I haven't been able to have Netlogo output the graphs with x and y labels, or a main title. 
+
+I just realized that instead of using double quotation marks I need to use single quotations marks ' '!!! Now it works :-)
+
+However, looking at the graphs, I noticed that females were not siring as much as I wanted to, and that is because they were moving too much so they were losing a lot of energy. Therefore, they were "running out" of energy for reproduction. Given that I took away the energy value for males, what I decided to do was to remove energy loss from females, and only have them gain energy when foraging, and then losing energy when they have babies. 
+
+<img src="barplot.jpg" alt="Drawing"style="width:500px"/>
+
+However, I still think the agents are not doing exactly what I want them to do, because in some cases I get lower ranking males to sire more offspring than higher ranking males.
+
+
+ 
+
 
  
 
