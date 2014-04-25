@@ -70,13 +70,14 @@ to setup
       set color red
       set shape "tree"
       set size 0.2
-      set tree-energy 10
+      set tree-energy random 100
       setxy random-xcor random-ycor
       set time-till-regrow regeneration-time
     ]
     
   ask patches [
     set number-trees count trees-here 
+    set patch-energy sum [tree-energy] of trees-here with [color = red]
     set occupied? false]
     
 
@@ -155,15 +156,15 @@ to setup
 end
 
 to male-find-patch 
-  move-to max-one-of patches with [occupied? = false] [number-trees]
+  move-to max-one-of patches with [occupied? = false] [patch-energy]
   ask patch-here [set occupied? true]
 end
 
 to create-table
   sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
     ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
-  sql:exec-direct (word "DROP TABLE IF EXISTS " table-name)
-  sql:exec-direct (word "CREATE TABLE IF NOT EXISTS " table-name "(male_rank INT, number_offspring INT)")
+  sql:exec-direct (word "DROP TABLE IF EXISTS " table-name1)
+  sql:exec-direct (word "CREATE TABLE IF NOT EXISTS " table-name1 "(male_rank INT, number_offspring INT)")
 end
 
 
@@ -179,8 +180,8 @@ to go
      check-occupied-patches]
    ask males [
      set color blue ;; so males that lost a dominance interaction in the last run turn back to blue
-     check-male-happiness
-     males-move]
+     check-male-happiness]
+     ;males-move]
     ask females [
       females-reproduce
       check-female-happiness
@@ -192,8 +193,7 @@ to go
   tick
   do-plot1
   do-plot2
-  do-plot3
-  do-plot4]
+  do-plot3]
   [export-db 
     if create-figures [rep-success-plot]
     stop]
@@ -208,15 +208,15 @@ to export-db
   ask males [
     let male-rank rank
     let num-offspring length offspring-sired
-  sql:exec-direct (word "INSERT INTO " table-name " (male_rank, number_offspring) VALUES (" male-rank " ," num-offspring ")")]
+  sql:exec-direct (word "INSERT INTO " table-name1 " (male_rank, number_offspring) VALUES (" male-rank " ," num-offspring ")")]
 end
 
 to rep-success-plot
   sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
     ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
-  sql:exec-direct (word "SELECT `number_offspring` FROM " table-name)
+  sql:exec-direct (word "SELECT `number_offspring` FROM " table-name1)
   let offspring sql:fetch-resultset
-  sql:exec-direct (word "SELECT `male_rank` FROM " table-name)
+  sql:exec-direct (word "SELECT `male_rank` FROM " table-name1)
   let sires sql:fetch-resultset
   (r:put "sires" sires)
   (r:eval "b<-as.vector(sires)")
@@ -277,7 +277,7 @@ to females-move
   set tree-energy tree-energy - 1 ]
   set female-energy female-energy + 1] 
   [ female-find-new-patch
-    check-female-happiness
+    ;check-female-happiness
     ;set female-energy female-energy - 1
     ]
 end
@@ -285,7 +285,11 @@ end
 to female-find-new-patch
   ifelse any? patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
   [move-to max-one-of patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)][patch-energy]]
-  [die] ;; females disperse to find new territories. when they disperse, they die in the model. 
+  [ifelse any? patches with [((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
+    [move-to one-of patches with [((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]]
+    [die]
+  ]
+  ;[die] ;; females disperse to find new territories. when they disperse, they die in the model. 
 end
 
 
@@ -300,7 +304,8 @@ end
 
 
 to male-find-new-patch
-  move-to one-of patches with [patch-energy >= male-min-resources]
+  move-to max-one-of patches with [patch-energy >= male-min-resources] [patch-energy]
+  ;move-to max-one-of patches [patch-energy]
   set color blue
   if occupied? = true
   [dominance-interaction]
@@ -328,7 +333,8 @@ to females-reproduce
       create-links-with males-here with [color = blue]
       create-link-with female mom [tie]
       let infant-sired infant-ID
-      ask max-one-of males-here [dominance] [set offspring-sired lput infant-sired offspring-sired]
+      ;ask max-one-of males-here [dominance] [set offspring-sired lput infant-sired offspring-sired]
+      ask males-here [set offspring-sired lput infant-sired offspring-sired]
       ]
     ]
   ]
@@ -412,26 +418,12 @@ to do-plot3
   plotxy ticks mean-sex-ratio]
   [ plotxy ticks 0]
 end
-
-to do-plot4
-  set-current-plot "Male reproductive success"
-  set-plot-x-range 1 initial-males
-  set-histogram-num-bars initial-males
-  set-current-plot-pen "num-kids"
-  
-  ;ask males[
-  ;let male-rank [rank] of males
-  ;let num-kids length offspring-sired
-  ;plot num-kids]
-  ;set-current-plot-pen "num-kids"
-  update-plots
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 395
 14
 805
-685
+445
 -1
 -1
 80.0
@@ -447,7 +439,7 @@ GRAPHICS-WINDOW
 0
 4
 0
-7
+4
 0
 0
 1
@@ -480,7 +472,7 @@ initial-trees
 initial-trees
 0
 500
-185
+57
 1
 1
 NIL
@@ -510,7 +502,7 @@ y-num-territories
 y-num-territories
 0
 10
-8
+5
 1
 1
 NIL
@@ -525,7 +517,7 @@ regeneration-time
 regeneration-time
 0
 100
-20
+10
 1
 1
 NIL
@@ -540,7 +532,7 @@ initial-males
 initial-males
 0
 100
-25
+15
 1
 1
 NIL
@@ -624,7 +616,7 @@ female-min-resources
 female-min-resources
 0
 5
-0.5
+1
 0.5
 1
 NIL
@@ -639,7 +631,7 @@ male-min-resources
 male-min-resources
 0
 5
-0.4
+4
 0.2
 1
 NIL
@@ -654,7 +646,7 @@ energy-to-reproduce
 energy-to-reproduce
 0
 200
-50
+52
 1
 1
 NIL
@@ -803,30 +795,12 @@ prob-subordinate-win
 NIL
 HORIZONTAL
 
-PLOT
-850
-333
-1050
-483
-Male reproductive success
-Rank
-Offspring sired
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"num-kids" 1.0 1 -16777216 true "" "histogram length offspring-sired"
-
 INPUTBOX
-828
-497
-1063
-557
-table-name
+827
+296
+1062
+356
+table-name1
 PTM_offspring
 1
 0
@@ -838,16 +812,16 @@ INPUTBOX
 330
 79
 iterations
-100
+1000
 1
 0
 Number
 
 SWITCH
-828
-566
-974
-599
+827
+422
+973
+455
 create-figures
 create-figures
 0
@@ -868,6 +842,17 @@ cost-offspring
 1
 NIL
 HORIZONTAL
+
+INPUTBOX
+827
+359
+1062
+419
+table-name2
+NIL
+1
+0
+String
 
 @#$#@#$#@
 ## WHAT IS IT?

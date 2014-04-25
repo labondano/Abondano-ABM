@@ -1048,8 +1048,74 @@ However, looking at the graphs, I noticed that females were not siring as much a
 
 However, I still think the agents are not doing exactly what I want them to do, because in some cases I get lower ranking males to sire more offspring than higher ranking males.
 
+__________________
+#### APRIL 23, 2014 - Class notes: Links and Networks in NetLogo
 
- 
+**BASIC DEFINITIONS**
+
+- Network: collection of nodes (vertices) connected by links (edges)
+- Links between nodes can be directed or undirected (e.g. grooming vs. spatial proximity). 
+- Network struture can be represented in a graph, which specifies the relationships among a set of nodes. 
+- Path: the set og links needed to connect two nodes (two nodes can be connected by several paths).
+- Distance: length og the shortest patch between two nodes
+- Connected graph: a graph connected if there is some patch between every pair of nodes
+- Clustering coefficient: how often are links of a node connected to one another. Describes how interconnected the nodes are in a nework. RAnges between 0 and 1 for each node. 
+- Clustering of 0: when none of the nodes are connected to each other
+- Clustering of 1: when all of the nodes are connected to each other (perfectly connected network).
+
+**MEASURES OF CENTRALITY**
+
+- Degree: number of links a node has connected to it. Can also have "in-degree" and "out-degree" if links are directed. 
+- Betweenness: measure of the number of times a node is on the shortest path between possible pairs of nodes
+- Closeness: inverse of "farness" (the summed or averaged shortest distance from a node to all other nodes). Implemented by number of links or weighted edges. Usually is measured by the number of links. 
+- Eigenvector: measure of the influence of a node in a network; how often a node is traversed in a random walk on the network. Things at the end of a branch are going to be traversed less common, and nodes at the center of the network are going to be traversed more often. Its a single value, not a vector. 
+
+**The "small world" phenomenon**
+
+The distance between nodes in many real world network is often very short. (Six degrees of Kevin Bacon oracleofbacon.org/).
+
+**NETWORKS AND LINKS IN NETLOGO**
+
+- Nodes are turtle agents
+- Links are another special tupe of afents that connect two turtles
+- Links can be directed or undirected
+- Extension [nw] introduced new primitives
+- DEMO:
+- Preferential attachment button: when a new node is added it is preferentially going to a node where there are other links already attached to. 
+- Lattice = same number of nodes
+
+R package to analyze network data: igraph
+
+**In class challenge:** 
+
+Creating a network on the demo file from the extensions package, and then importing it in the virus network model and see how different types of networks (e.g. preferential-association, lattice, sphere) behave under the virus network model. 
+
+**Facebook**
+
+developers.facebook.com
+Go to apps tab and create a new app
+go to tools tab and choose graph explorer for your app and get an Access token
+Copy the token text
+
+__________
+
+#### APRIL 24, 2014 - Simplifying the mdoel
+
+Today I talked to Tony and we couldn't come up with an existing model to have trees clumped or evenly distributed. However, he suggested to simplify my model and have males staying in their patches instead of moving around, which is more like what the polygyny threshold model suggests. I tried this and was still getting dominance-offspring graphs that didn't really match my predictions, and after a while I realized that it was because I had an error in howI was assigning patch-energy values. Patch energy was counted as:
+
+      set patch-energy count trees-here with [color = red]
+      
+However, what I want my patch-energy to be is:
+
+      set patch-energy sum [tree-energy] of trees-here with [color = red]
+      
+his is why my females were dying so fast!!! Because they were assessing trees, when they should really should be assessing the number of total resources in the patch. However, I thought that the simplest way to do this was to simply assign a fixed values to all trees at the beginning, and instead of having trees growing and regenerating, I would keep trees fixed, and the number of trees in the patch will be the amount of resources (as opposed to the patch-energy value).
+
+
+
+
+
+
 
 
  
