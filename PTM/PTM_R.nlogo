@@ -1,6 +1,7 @@
-extensions [sql]
+extensions [r sql]
 
 globals [
+  initial-trees
   resource-abundance-list
   resources-per-patch
   monogamous-males
@@ -19,6 +20,7 @@ globals [
   ]
   
 breed [trees tree]
+breed [newtrees]
 breed [males male]
 breed [females female]
 breed [infants infant]
@@ -88,15 +90,68 @@ to setup
   ]
   
 ;; Create trees 
-  create-trees initial-trees
-    [
-      set color red
-      set shape "tree"
-      set size 0.2
-      set tree-energy 10
-      setxy random-xcor random-ycor
-      set time-till-regrow regeneration-time
+ ; create-trees initial-trees
+ ;   [
+ ;     set color red
+ ;     set shape "tree"
+ ;     set size 0.2
+ ;     set tree-energy 10
+ ;     setxy random-xcor random-ycor
+ ;     set time-till-regrow regeneration-time
+ ;   ]
+ 
+  
+; create-trees initial-trees
+;    ask trees [
+;    set color red
+;    set shape "tree"
+;    set size 0.2
+;    set tree-energy 10
+;    set time-till-regrow regeneration-time
+;    setxy random-xcor random-ycor
+;    hatch 9 [
+;      ;set color yellow
+;      set breed newtrees
+;      foreach sort-on [who] newtrees [
+;      ask ? [
+;      rt random-float 360 
+;      fd random-float distance-trees
+;      set breed trees
+;      set shape "tree"
+;      set tree-energy 10
+;      ]
+ ;   ]
+  ; ]
+   ;] 
+    
+    set initial-trees (total-trees / 10)
+    create-trees initial-trees
+    ask trees [
+    setxy random-xcor random-ycor
+    hatch 9 [
+      set breed newtrees
+      foreach sort-on [who] newtrees [
+      ask ? [
+      rt random-float 360 
+      fd random-float distance-trees
+      set breed trees
+      ]
     ]
+   ]
+   ] 
+   
+   ask trees [
+    set color red
+    set shape "tree"
+    set size 0.2
+    set tree-energy 10
+    set time-till-regrow regeneration-time
+   ]  
+    
+    
+    
+    
+    
     
   ask patches [
     set number-trees count trees-here 
@@ -190,9 +245,13 @@ end
 
 to female-find-patch
   ifelse any? patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
-  [move-to max-one-of patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)][patch-energy]]
+  [move-to max-one-of patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)][patch-energy]
+    rt random-float 360
+    fd random-float 0.5]
   [ifelse any? patches with [((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
-    [move-to one-of patches with [((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]]
+    [move-to one-of patches with [((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
+    rt random-float 360
+    fd random-float 0.5]
     [die]
   ]
   ;[die] ;; females disperse to find new territories. when they disperse, they die in the model. 
@@ -235,7 +294,7 @@ to go
   do-plot2
   do-plot3]
   [export-db 
-    ;if create-figures [rep-success-plot]
+    if create-figures [rep-success-plot]
     stop
     output-data]
 end
@@ -271,7 +330,22 @@ to export-db
   sql:exec-direct (word "INSERT INTO " table-name1 " (male_rank, number_offspring) VALUES (" male-rank " ," num-offspring ")")]
 end
 
-  
+to rep-success-plot
+  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
+    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
+  sql:exec-direct (word "SELECT `number_offspring` FROM " table-name1)
+  let offspring sql:fetch-resultset
+  sql:exec-direct (word "SELECT `male_rank` FROM " table-name1)
+  let sires sql:fetch-resultset
+  (r:put "sires" sires)
+  (r:eval "b<-as.vector(sires)")
+  (r:put "offspring" offspring)
+  (r:eval "a<- as.vector(offspring)")
+  (r:eval "df<-as.data.frame(cbind(b,a))")
+  (r:eval "order.df<-df[order(as.numeric(df$b)) , ]")
+  (r:eval "barplot(as.integer(order.df[,2]), names.arg = as.character(order.df$b), xlab = 'Male rank', ylab = 'Number of offspring sired', col = 'blue', main = 'Male reproductive success according to dominance rank')")
+
+end 
  
   
 ;;;;;;;; CHECK VARIABLES ;;;;;;;;
@@ -498,15 +572,15 @@ NIL
 1
 
 SLIDER
-8
-192
-180
-225
-initial-trees
-initial-trees
+477
+458
+649
+491
+initial-trees2
+initial-trees2
 0
-500
-60
+25
+25
 1
 1
 NIL
@@ -566,7 +640,7 @@ initial-males
 initial-males
 0
 100
-23
+24
 1
 1
 NIL
@@ -858,7 +932,7 @@ SWITCH
 455
 create-figures
 create-figures
-0
+1
 1
 -1000
 
@@ -887,6 +961,51 @@ NIL
 1
 0
 String
+
+SLIDER
+277
+484
+449
+517
+new-trees
+new-trees
+0
+10
+8
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+507
+509
+679
+542
+distance-trees
+distance-trees
+0
+3
+0.25
+0.25
+1
+NIL
+HORIZONTAL
+
+SLIDER
+698
+477
+870
+510
+total-trees
+total-trees
+0
+500
+40
+10
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
