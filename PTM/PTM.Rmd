@@ -1,0 +1,54 @@
+Laura Abondano
+POLYGYNY THRESHOLD MODEL
+========================================================
+
+Install and load required packages to connect R and Netlogo:
+```{r Loading required packages}
+library(rJava)
+library(JavaGD)
+library(RNetLogo)
+library(ggplot2)
+```
+
+To load modified Flocking model from Netlogo:
+```{r Loading modified Flocking model from Netlogo}
+nl.path <- "/Applications/NetLogo 5.0.5"
+NLStart(nl.path, gui=FALSE)
+nl.model <- "/Users/Bondi/Dropbox/UT-Austin/4th Semester/Agent Based Modelling/Abondano-ABMGitHub/PTM/PTM_R.nlogo"
+# replace the path above with your own path the to Flocking.nlogo program
+NLLoadModel(nl.model)
+```
+
+
+
+
+```{r PTM typical graph}
+female.rep.success <- function(simul,ticks,trees.seq,num.males){
+  df.PTM <- data.frame(matrix(nrow=(length(trees.seq)),ncol=4))
+  names(df.PTM) <- c("Initial.trees", "Average Resources", "Mono.success", "Poly.success")
+  for (i in 1:length(trees.seq)){
+  trees <- trees.seq[i]
+  NLCommand(paste("set initial-trees ", trees), "setup")
+  NLCommand(paste("while [ticks < ", ticks),"] [go]") 
+  monogamous.fem.success <- as.numeric(NLReport("sum mono-females-rep-success"))
+  polygynous.fem.success <- as.numeric(NLReport("sum poly-females-rep-success"))
+  average.resources.total <- as.numeric(NLReport("mean resource-abundance-list"))
+  df.PTM[i,]<-c(trees, average.resources.total,monogamous.fem.success,polygynous.fem.success)
+  }   
+  return(df.PTM)
+}
+
+trees.seq<-seq(20,200,20)
+a<-female.rep.success(1,100,trees.seq,10)
+a
+plot.a<-ggplot(data = a) + geom_smooth (aes(x = Initial.trees, y = Mono.success)) + geom_smooth (aes(x = Initial.trees, y = Poly.success), col = "red") 
+plot.a
+```
+
+
+To quit the Netlogo Flocking model:
+```{r Quit Netlogo}
+NLQuit()
+```
+
+

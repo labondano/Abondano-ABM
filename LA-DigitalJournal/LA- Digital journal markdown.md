@@ -1099,7 +1099,7 @@ Copy the token text
 
 __________
 
-#### APRIL 24, 2014 - Simplifying the mdoel
+#### APRIL 24, 2014 - Simplifying the model
 
 Today I talked to Tony and we couldn't come up with an existing model to have trees clumped or evenly distributed. However, he suggested to simplify my model and have males staying in their patches instead of moving around, which is more like what the polygyny threshold model suggests. I tried this and was still getting dominance-offspring graphs that didn't really match my predictions, and after a while I realized that it was because I had an error in howI was assigning patch-energy values. Patch energy was counted as:
 
@@ -1109,7 +1109,21 @@ However, what I want my patch-energy to be is:
 
       set patch-energy sum [tree-energy] of trees-here with [color = red]
       
-his is why my females were dying so fast!!! Because they were assessing trees, when they should really should be assessing the number of total resources in the patch. However, I thought that the simplest way to do this was to simply assign a fixed values to all trees at the beginning, and instead of having trees growing and regenerating, I would keep trees fixed, and the number of trees in the patch will be the amount of resources (as opposed to the patch-energy value).
+his is why my females were dying so fast!!! Because they were assessing trees, when they should really should be assessing the number of total resources in the patch. 
+
+However, I thought that the simplest way to do this was to simply assign a fixed values to all trees at the beginning, and instead of having trees growing and regenerating, I would keep trees fixed, and the number of trees in the patch will be the amount of resources (as opposed to the patch-energy value). Doing this I also had to remove the tree-dynamics procedure, which had trees losing all their resources and then regenerating. However, if I do this there would be no dynamism in the model and would be static, where females go to patches with highest number of trees and then don't move at all. 
+
+So I went back to my previous idea of having females move to patches with highest energy, instead of patches with more trees. Also, I changes the code for males to move initially to patches with highest energy instead of patches with more trees. Also, my females were dying very fast because I had trees to start with energy of 10, so they would lose their resources very fast so females would die very quick. 
+
+I was having the problem that if at the beginning females were set randomly in the world, and their minimum resources were low, they would be happpy in the patch they were initially positioned, regardless of male rank. This is not really what the PTM is. So what I did was to have females assign from the beginning which were the patches with most energy and move to those patches if their met their minimum resources. This made the model work better and results be more realistic and fit my expectations. Now the sire-offspring graphs look just like I expected them to look: higher ranking males siring more offspring than lower ranking males. 
+
+__________
+
+#### APRIL 24, 2014 - Making graphs from R
+
+I created the 
+
+
 
 
 

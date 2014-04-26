@@ -1,4 +1,4 @@
-extensions [sql r]
+extensions [sql]
 
 globals [
   resource-abundance-list
@@ -235,7 +235,7 @@ to go
   do-plot2
   do-plot3]
   [export-db 
-    if create-figures [rep-success-plot]
+    ;if create-figures [rep-success-plot]
     stop
     output-data]
 end
@@ -271,22 +271,6 @@ to export-db
   sql:exec-direct (word "INSERT INTO " table-name1 " (male_rank, number_offspring) VALUES (" male-rank " ," num-offspring ")")]
 end
 
-to rep-success-plot
-  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
-    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
-  sql:exec-direct (word "SELECT `number_offspring` FROM " table-name1)
-  let offspring sql:fetch-resultset
-  sql:exec-direct (word "SELECT `male_rank` FROM " table-name1)
-  let sires sql:fetch-resultset
-  (r:put "sires" sires)
-  (r:eval "b<-as.vector(sires)")
-  (r:put "offspring" offspring)
-  (r:eval "a<- as.vector(offspring)")
-  (r:eval "df<-as.data.frame(cbind(b,a))")
-  (r:eval "order.df<-df[order(as.numeric(df$b)) , ]")
-  (r:eval "barplot(as.integer(order.df[,2]), names.arg = as.character(order.df$b), xlab = 'Male rank', ylab = 'Number of offspring sired', col = 'blue', main = 'Male reproductive success according to dominance rank')")
-
-end
   
  
   
