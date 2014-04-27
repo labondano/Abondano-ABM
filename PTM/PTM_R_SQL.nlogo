@@ -1,4 +1,4 @@
-extensions []
+extensions [r sql]
 
 globals [
   initial-trees
@@ -15,7 +15,6 @@ globals [
   poly-males-output
   roaming-males-output
   resources-output-patch
-  distribution-code ; 1 uniform, 2 clumped, 3 random
   ;sire-offspring
   ;male-ranks ;; empty list to store the rank/dominance ???(still don't know which is better) values of males 
   ]
@@ -29,7 +28,7 @@ breed [infants infant]
 males-own [
   dominance
   rank
-  ;male-happy?
+  male-happy?
   offspring-sired
   ]
 females-own [
@@ -90,49 +89,7 @@ to setup
     [set pcolor green - 1]
   ]
 
-;; Create trees with uniform distribution
- if distribution = "uniform" or distribution = 1 [
-   create-trees 1 [
-     move-to patch 0 0
-     let new-trees total-trees / count patches
-     hatch new-trees - 1 [
-      set breed newtrees
-      foreach sort-on [who] newtrees [
-      ask ? [
-      rt random-float 360 
-      fd 0.2
-      set breed trees
-      ]
-      ]
-     ]
-   ]
-   set initial-trees count patches - 1
-   create-trees initial-trees [
-     move-to one-of patches with [not any? trees-here]
-     let new-trees total-trees / count patches
-     hatch new-trees - 1 [
-      set breed newtrees
-      foreach sort-on [who] newtrees [
-      ask ? [
-      rt random-float 360 
-      fd 0.2
-      set breed trees
-      ]
-      ]
-     ]
-    ]
-   ]
- 
-
-;; Create trees with random distribution
- if distribution = "random" or distribution = 3 [
-   create-trees total-trees [
-   setxy random-xcor random-ycor
- ]
- ]
-
-;; Create trees with clumped distribution
- if distribution = "clumped" or distribution = 2 [
+;; Create trees   
     set initial-trees (total-trees / 10)
     create-trees initial-trees
     ask trees [
@@ -148,8 +105,6 @@ to setup
     ]
    ]
    ] 
- ]
-
    
    ask trees [
     set color red
@@ -219,19 +174,19 @@ to setup
     ask females [
       female-find-patch
       ;setxy random-xcor random-ycor ;; females are not constrained to territories initially. They are wondering around until they get to establish in a male's territory.
-      ifelse ((patch-energy / (count females-here)) >= female-min-resources) and any? males-here
+      ifelse ((patch-energy / (count females-here + count males-here)) >= female-min-resources) and any? males-here
         [set female-happy? true]
         [set female-happy? false]
     ]
   
 ;; Assign males to be happy or unhappy (according to the their minimum resources threshold)
- ; foreach sort-on [rank] males [ 
- ;   ask ? [
- ;     ifelse (patch-energy / (count females-here + count males-here)) >= male-min-resources
- ;     [set male-happy? true]
- ;     [set male-happy? false]
- ;   ]
- ; ]
+  foreach sort-on [rank] males [ 
+    ask ? [
+      ifelse (patch-energy / (count females-here + count males-here)) >= male-min-resources
+      [set male-happy? true]
+      [set male-happy? false]
+    ]
+  ]
     
     ask patches [
       set number-males count males-here
@@ -241,7 +196,7 @@ to setup
       [set sex-ratio 0]  
       ]
   reset-ticks
-  ;create-table 
+  create-table 
 end
 
 to male-find-patch 
@@ -251,12 +206,12 @@ end
 
 
 to female-find-patch
-  ifelse any? patches with [occupied? = true and ((patch-energy / (count females-here + 1)) >= female-min-resources)]
-  [move-to max-one-of patches with [occupied? = true and ((patch-energy / (count females-here + 1)) >= female-min-resources)][patch-energy]
+  ifelse any? patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
+  [move-to max-one-of patches with [occupied? = true and ((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)][patch-energy]
     rt random-float 360
     fd random-float 0.5]
-  [ifelse any? patches with [((patch-energy / (count females-here + 1)) >= female-min-resources)]
-    [move-to one-of patches with [((patch-energy / (count females-here + 1)) >= female-min-resources)]
+  [ifelse any? patches with [((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
+    [move-to one-of patches with [((patch-energy / (count females-here + 1 + count males-here)) >= female-min-resources)]
     rt random-float 360
     fd random-float 0.5]
     [die]
@@ -265,6 +220,12 @@ to female-find-patch
 end
 
 
+to create-table
+  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
+    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
+  sql:exec-direct (word "DROP TABLE IF EXISTS " table-name1)
+  sql:exec-direct (word "CREATE TABLE IF NOT EXISTS " table-name1 "(male_rank INT, number_offspring INT)")
+end
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -279,9 +240,8 @@ to go
      check-occupied-patches]
    ask males [
      set color blue ;; so males that lost a dominance interaction in the last run turn back to blue
-     ;check-male-happiness]
+     check-male-happiness]
      ;males-move]
-   ]
     ask females [
       females-reproduce
       check-female-happiness
@@ -291,9 +251,12 @@ to go
     ask trees [
       tree-dynamics]
   tick
-  update-lists]
-  [;export-db ;; uncomment if want to output MySQL graph
-    ;if create-figures [rep-success-plot]
+  update-lists
+  do-plot1
+  do-plot2
+  do-plot3]
+  [export-db 
+    if create-figures [rep-success-plot]
     stop
     output-data]
 end
@@ -313,38 +276,38 @@ to output-data
   set resources-output-patch resources-per-patch
   set mono-males-output monogamous-males
   set poly-males-output polygynous-males
-  set roaming-males-output roaming-males 
+  set roaming-males-output roaming-males
 end
 
 
 ;;;;;;; EXPORT DATABASE TO SQL ;;;;;;;;;;
 
 
-;to export-db
-;  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
-;    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
-;  ask males [
-;    let male-rank rank
-;    let num-offspring length offspring-sired
-;  sql:exec-direct (word "INSERT INTO " table-name1 " (male_rank, number_offspring) VALUES (" male-rank " ," num-offspring ")")]
-;end
+to export-db
+  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
+    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
+  ask males [
+    let male-rank rank
+    let num-offspring length offspring-sired
+  sql:exec-direct (word "INSERT INTO " table-name1 " (male_rank, number_offspring) VALUES (" male-rank " ," num-offspring ")")]
+end
 
-;to rep-success-plot
-;  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
-;    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
-;  sql:exec-direct (word "SELECT `number_offspring` FROM " table-name1)
-;  let offspring sql:fetch-resultset
-;  sql:exec-direct (word "SELECT `male_rank` FROM " table-name1)
-;  let sires sql:fetch-resultset
-;  (r:put "sires" sires)
-;  (r:eval "b<-as.vector(sires)")
-;  (r:put "offspring" offspring)
-;  (r:eval "a<- as.vector(offspring)")
-;  (r:eval "df<-as.data.frame(cbind(b,a))")
-;  (r:eval "order.df<-df[order(as.numeric(df$b)) , ]")
-;  (r:eval "barplot(as.integer(order.df[,2]), names.arg = as.character(order.df$b), xlab = 'Male rank', ylab = 'Number of offspring sired', col = 'blue', main = 'Male reproductive success according to dominance rank')")
-;
-;end 
+to rep-success-plot
+  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
+    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
+  sql:exec-direct (word "SELECT `number_offspring` FROM " table-name1)
+  let offspring sql:fetch-resultset
+  sql:exec-direct (word "SELECT `male_rank` FROM " table-name1)
+  let sires sql:fetch-resultset
+  (r:put "sires" sires)
+  (r:eval "b<-as.vector(sires)")
+  (r:put "offspring" offspring)
+  (r:eval "a<- as.vector(offspring)")
+  (r:eval "df<-as.data.frame(cbind(b,a))")
+  (r:eval "order.df<-df[order(as.numeric(df$b)) , ]")
+  (r:eval "barplot(as.integer(order.df[,2]), names.arg = as.character(order.df$b), xlab = 'Male rank', ylab = 'Number of offspring sired', col = 'blue', main = 'Male reproductive success according to dominance rank')")
+
+end 
  
   
 ;;;;;;;; CHECK VARIABLES ;;;;;;;;
@@ -376,11 +339,11 @@ to check-female-happiness
         [set female-happy? false]
 end
 
-;to check-male-happiness
-;    ifelse ((patch-energy / (count females-here + count males-here)) >= male-min-resources) and (not any? other males-here) and any? trees-here with [color = red]
-;      [set male-happy? true]
-;      [set male-happy? false]
-;end
+to check-male-happiness
+    ifelse ((patch-energy / (count females-here + count males-here)) >= male-min-resources) and (not any? other males-here) and any? trees-here with [color = red]
+      [set male-happy? true]
+      [set male-happy? false]
+end
 
 
 ;;;;;;;;; FEMALES MOVE ;;;;;;;;; 
@@ -400,26 +363,26 @@ end
 
 ;;;;;;;;; MALES MOVE ;;;;;;;;;;
 
-;to males-move
-;  ifelse male-happy? = true [ 
-;  move-to min-one-of trees-here with [color = red] [distance myself] 
-;  ask min-one-of trees [distance myself] [set tree-energy tree-energy - 1 ]]
-;  [male-find-new-patch] 
-;end
+to males-move
+  ifelse male-happy? = true [ 
+  move-to min-one-of trees-here with [color = red] [distance myself] 
+  ask min-one-of trees [distance myself] [set tree-energy tree-energy - 1 ]]
+  [male-find-new-patch] 
+end
 
 
-;to male-find-new-patch
-;  move-to max-one-of patches with [patch-energy >= male-min-resources] [patch-energy]
-;  ;move-to max-one-of patches [patch-energy]
-;  set color blue
-;  if occupied? = true
-;  [dominance-interaction]
-;end
+to male-find-new-patch
+  move-to max-one-of patches with [patch-energy >= male-min-resources] [patch-energy]
+  ;move-to max-one-of patches [patch-energy]
+  set color blue
+  if occupied? = true
+  [dominance-interaction]
+end
 
-;to dominance-interaction
-;  ;if random-float 1 > prob-subordinate-win [ask males-here with-min [dominance] [set color yellow male-find-new-patch]] 
-;  if random-float 1 > prob-subordinate-win [ask other males-here [set color yellow male-find-new-patch]] 
-;end
+to dominance-interaction
+  ;if random-float 1 > prob-subordinate-win [ask males-here with-min [dominance] [set color yellow male-find-new-patch]] 
+  if random-float 1 > prob-subordinate-win [ask other males-here [set color yellow male-find-new-patch]] 
+end
 
 ;;;;;;;;; FEMALES REPRODUCE ;;;;;;;;;;
 
@@ -474,6 +437,57 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;; DO PLOTS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to do-plot1
+  set-current-plot "mono-vs-poly" ;; show how many monogamus territories vs. how many polygynous territories
+  ;set-current-plot-pen "average-trees"
+  ;let trees-available (count trees with [color = red] / (x-num-territories * y-num-territories))
+  ;plotxy ticks trees-available
+  set-current-plot-pen "%-mono-patches"
+  let mono-patches (count patches with [number-females = 1] / count patches with [occupied? = true] )  * 100
+  plotxy ticks mono-patches
+  set-current-plot-pen "%-poly-patches"
+  let poly-patches (count patches with [number-females > 1] / count patches with [occupied? = true] ) * 100
+  plotxy ticks poly-patches
+end
+
+
+to do-plot2
+  set-current-plot "resources for females" ;; show how many monogamus territories vs. how many polygynous territories
+  set-current-plot-pen "trees-per-female"
+  ifelse count females != 0 
+  [let trees-per-female (count trees with [color = red] / count females)
+     plotxy ticks trees-per-female
+     ]
+  [ user-message (word "All females died. "
+                       "Try the following options: \n"
+                       "1. Decrease number of females, \n"
+                       "2. increase number of trees, \n"
+                       "3. increase regeneration-time, or \n"
+                       "4. reduce the female-min-resources. \n"
+                       "The model has stopped.")
+    stop
+    ]
+  set-current-plot-pen "mono-groups"
+  let mono-patches count patches with [number-females = 1]
+  plotxy ticks mono-patches
+  set-current-plot-pen "poly-groups"
+  let poly-patches count patches with [number-females > 1] 
+  plotxy ticks poly-patches
+end
+
+
+to do-plot3
+  set-current-plot "sex ratio of poly-groups" ;; show how many monogamus territories vs. how many polygynous territories
+  set-current-plot-pen "trees-per-individual"
+  let trees-per-individual (count trees with [color = red] / count turtles)
+  plotxy ticks trees-per-individual
+  set-current-plot-pen "mean-sex-ratio"
+  ifelse count patches with [number-females > 1] != 0
+  [let mean-sex-ratio mean [sex-ratio] of patches with [number-females > 1] 
+  plotxy ticks mean-sex-ratio]
+  [ plotxy ticks 0]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 395
@@ -550,10 +564,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-185
-229
-357
-262
+187
+193
+359
+226
 regeneration-time
 regeneration-time
 0
@@ -588,7 +602,7 @@ initial-females
 initial-females
 0
 100
-12
+100
 1
 1
 NIL
@@ -656,9 +670,9 @@ SLIDER
 female-min-resources
 female-min-resources
 0
-50
-25
-1
+10
+10
+0.5
 1
 NIL
 HORIZONTAL
@@ -687,7 +701,7 @@ energy-to-reproduce
 energy-to-reproduce
 50
 200
-80
+86
 1
 1
 NIL
@@ -704,6 +718,25 @@ count trees with [color = red]
 1
 11
 
+PLOT
+294
+565
+552
+719
+mono-vs-poly
+ticks
+percent
+0.0
+200.0
+0.0
+100.0
+true
+true
+"" ""
+PENS
+"%-poly-patches" 1.0 0 -14730904 true "" ""
+"%-mono-patches" 1.0 0 -5298144 true "" ""
+
 MONITOR
 832
 140
@@ -714,6 +747,45 @@ MONITOR
 17
 1
 11
+
+PLOT
+20
+564
+278
+730
+resources for females
+ticks
+count
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"mono-groups" 1.0 0 -5298144 true "" ""
+"poly-groups" 1.0 0 -13345367 true "" ""
+"trees-per-female" 1.0 0 -12087248 true "" ""
+
+PLOT
+559
+567
+818
+716
+sex ratio of poly-groups
+ticks
+count
+0.0
+10.0
+0.0
+5.0
+true
+true
+"" ""
+PENS
+"trees-per-individual" 1.0 0 -12087248 true "" ""
+"mean-sex-ratio" 1.0 0 -12572331 true "" ""
 
 MONITOR
 831
@@ -845,18 +917,18 @@ SLIDER
 distance-trees
 distance-trees
 0
-3
-0.25
+5
+3.5
 0.25
 1
 NIL
 HORIZONTAL
 
 SLIDER
-186
-191
-358
-224
+10
+193
+182
+226
 total-trees
 total-trees
 0
@@ -877,15 +949,15 @@ To setup trees
 0.0
 1
 
-CHOOSER
-10
-183
-183
-228
-distribution
-distribution
-"uniform" "clumped" "random" 1 2 3
-0
+TEXTBOX
+194
+232
+370
+261
+Low distance-tree = CLUMPED\nHigh distance-tree = DISPERSE
+11
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
