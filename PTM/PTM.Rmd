@@ -34,6 +34,7 @@ female.rep.success <- function(simul,ticks,trees.seq,tree.distribution,dist.tree
   NLCommand(paste("set initial-males ", num.males), "setup")
   NLCommand(paste("set initial-females ", num.fem), "setup")
   NLCommand(paste("set female-min-resources ", fem.min.resources), "setup")
+  NLCommand(paste("set stop-ticks ", ticks), "setup")
   NLCommand(paste("while [ticks < ", ticks),"] [go]") 
   monogamous.fem.success <- as.numeric(NLReport("sum mono-females-rep-success"))
   polygynous.fem.success <- as.numeric(NLReport("sum poly-females-rep-success"))
@@ -43,12 +44,13 @@ female.rep.success <- function(simul,ticks,trees.seq,tree.distribution,dist.tree
   return(df.PTM)
 }
 
-trees.seq<-seq(100,500,50)
-fem.mono.poly.uniform<-female.rep.success(1,100,trees.seq,1, 0.25, 24, 100, 10)
-fem.mono.poly.clumped<-female.rep.success(1,100,trees.seq,2, 0.25, 24, 100, 10)
-fem.mono.poly.random<-female.rep.success(1,100,trees.seq,3, 0.25, 24, 100, 10)
-plot.1<-ggplot() + geom_smooth (data = fem.mono.poly.uniform, aes(x = Initial.trees, y = Mono.success), colour = "red", size = 2) + geom_smooth (data = fem.mono.poly.uniform, aes(x = Initial.trees, y = Poly.success), colour = "blue", size = 2) + geom_smooth (data = fem.mono.poly.clumped, aes(x = Initial.trees, y = Mono.success), colour = "orange", size = 2) + geom_smooth (data = fem.mono.poly.clumped, aes(x = Initial.trees, y = Poly.success), colour = "green", size = 2) + geom_smooth (data = fem.mono.poly.random, aes(x = Initial.trees, y = Mono.success), colour = "yellow", size = 2) + geom_smooth (data = fem.mono.poly.random, aes(x = Initial.trees, y = Poly.success), colour = "purple", size = 2) + xlab("Abundance of Resources") + ylab("Female Reproductive Success") + theme(axis.title=element_text(size=22), axis.text=element_text(size=14))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-plot.1
+trees.seq<-seq(50,500,50)
+fem.mono.poly.uniform<-female.rep.success(1,100,trees.seq,1, 0.25, 24, 25, 10)
+fem.mono.poly.clumped<-female.rep.success(1,100,trees.seq,2, 0.25, 24, 25, 10)
+fem.mono.poly.random<-female.rep.success(1,100,trees.seq,3, 0.25, 24, 25, 10)
+plot.1<-ggplot() + geom_smooth (data = fem.mono.poly.uniform, aes(x = Initial.trees, y = Mono.success, colour = "red"), size = 2) + geom_smooth (data = fem.mono.poly.uniform, aes(x = Initial.trees, y = Poly.success, colour = "blue"), size = 2) + geom_smooth (data = fem.mono.poly.clumped, aes(x = Initial.trees, y = Mono.success, colour = "orange"), size = 2) + geom_smooth (data = fem.mono.poly.clumped, aes(x = Initial.trees, y = Poly.success, colour = "green"), size = 2) + geom_smooth (data = fem.mono.poly.random, aes(x = Initial.trees, y = Mono.success, colour = "yellow"), size = 2) + geom_smooth (data = fem.mono.poly.random, aes(x = Initial.trees, y = Poly.success, colour = "magenta"), size = 2) + xlab("Abundance of Resources") + ylab("Female Reproductive Success") + theme(axis.title=element_text(size=22), axis.text=element_text(size=14))
+plot.1 + scale_colour_manual(guide = "legend", name = 'Mating - Resources', values =c('blue'='blue','green'='green','magenta'='magenta','red'='red','orange'='orange','yellow'='yellow' ), labels = c('Polygynous - Uniform','Polygynous - Clumped', 'Polygynous - Random', 'Monogamous - Uniform','Monogamous - Clumped','Monogamous - Random')) + theme(legend.title = element_text(size=18), legend.text = element_text(size=18))
+
 fem.mono.poly.random
 ```
 
@@ -78,6 +80,7 @@ prec.alt <- function(simul,ticks,trees.seq,tree.distribution,dist.trees,num.male
   NLCommand(paste("set initial-females ", num.fem), "setup")
   NLCommand(paste("set female-min-resources ", fem.min.resources), "setup")
   NLCommand(paste("set age-of-dispersal ", age.dispersal), "setup")
+  NLCommand(paste("set stop-ticks ", ticks), "setup")
   NLCommand(paste("while [ticks < ", ticks),"] [go]") 
   monogamous.fem.success <- as.numeric(NLReport("sum mono-females-rep-success"))
   polygynous.fem.success <- as.numeric(NLReport("sum poly-females-rep-success"))
@@ -87,15 +90,16 @@ prec.alt <- function(simul,ticks,trees.seq,tree.distribution,dist.trees,num.male
   return(df.PTM)
 }
 
-trees.seq<-seq(100,500,50)
+trees.seq<-seq(50,500,50)
 
-dispersal.10<-prec.alt(1,100,trees.seq,2, 0.25, 24, 100, 10,5)
-dispersal.20<-prec.alt(1,100,trees.seq,2, 0.25, 24, 100, 10,10)
-dispersal.30<-prec.alt(1,100,trees.seq,2, 0.25, 24, 100, 10,20)
-dispersal.40<-prec.alt(1,100,trees.seq,2, 0.25, 24, 100, 10,40)
-dispersal.50<-prec.alt(1,100,trees.seq,2, 0.25, 24, 100, 10,80)
-plot.dispersal<-ggplot() + geom_smooth (data = dispersal.10, aes(x = Initial.trees, y = Poly.success), colour = "blue", size = 2) + geom_smooth (data = dispersal.20, aes(x = Initial.trees, y = Poly.success), colour = "green", size = 2) + geom_smooth (data = dispersal.30, aes(x = Initial.trees, y = Poly.success), colour = "purple", size = 2) + geom_smooth (data = dispersal.40, aes(x = Initial.trees, y = Poly.success), colour = "yellow", size = 2) + geom_smooth (data = dispersal.50, aes(x = Initial.trees, y = Poly.success), colour = "red", size = 2) + xlab("Abundance of Resources") + ylab("Female Reproductive Success") + theme(axis.title=element_text(size=22), axis.text=element_text(size=14))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-plot.dispersal
+dispersal.5<-prec.alt(1,100,trees.seq,2, 0.25, 24, 25, 10,5)
+dispersal.10<-prec.alt(1,100,trees.seq,2, 0.25, 24, 25, 10,10)
+dispersal.20<-prec.alt(1,100,trees.seq,2, 0.25, 24, 25, 10,20)
+dispersal.40<-prec.alt(1,100,trees.seq,2, 0.25, 24, 25, 10,40)
+dispersal.80<-prec.alt(1,100,trees.seq,2, 0.25, 24, 25, 10,80)
+plot.dispersal<-ggplot() + geom_smooth (data = dispersal.5, aes(x = Initial.trees, y = Poly.success, colour = "blue"), size = 2) + geom_smooth (data = dispersal.10, aes(x = Initial.trees, y = Poly.success, colour = "green"), size = 2) + geom_smooth (data = dispersal.20, aes(x = Initial.trees, y = Poly.success, colour = "magenta"), size = 2) + geom_smooth (data = dispersal.40, aes(x = Initial.trees, y = Poly.success, colour = "red"), size = 2) + geom_smooth (data = dispersal.80, aes(x = Initial.trees, y = Poly.success, colour = "yellow"), size = 2) + xlab("Abundance of Resources") + ylab("Female Reproductive Success") + theme(axis.title=element_text(size=22), axis.text=element_text(size=14))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+plot.dispersal + scale_colour_manual(guide = "legend", name = 'Age of Dispersal', values =c('blue'='blue','green'='green','magenta'='magenta', 'red' = 'red','yellow'='yellow' ), labels = c('5','10', '20', '40','80')) + theme(legend.title = element_text(size=18), legend.text = element_text(size=18))
 
 ```
 

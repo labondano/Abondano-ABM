@@ -1,4 +1,4 @@
-extensions []
+extensions [r sql]
 
 globals [
   initial-trees
@@ -16,7 +16,7 @@ globals [
   roaming-males-output
   resources-output-patch
   distribution-code ; 1 uniform, 2 clumped, 3 random
-  ;sire-offspring
+  sire-offspring
   ;male-ranks ;; empty list to store the rank/dominance ???(still don't know which is better) values of males 
   ]
   
@@ -241,7 +241,8 @@ to setup
       [set sex-ratio 0]  
       ]
   reset-ticks
-  ;create-table 
+  create-table1
+  create-table2 
 end
 
 to male-find-patch 
@@ -264,6 +265,19 @@ to female-find-patch
   ;[die] ;; females disperse to find new territories. when they disperse, they die in the model. 
 end
 
+to create-table1
+  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
+    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
+  sql:exec-direct (word "DROP TABLE IF EXISTS " table-name1)
+  sql:exec-direct (word "CREATE TABLE IF NOT EXISTS " table-name1 "(male_rank INT, number_offspring INT)")
+end
+
+to create-table2
+  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
+    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
+  ;sql:exec-direct (word "DROP TABLE IF EXISTS " table-name2)
+  sql:exec-direct (word "CREATE TABLE IF NOT EXISTS " table-name2 "(simulation TEXT, male_rank INT, number_offspring INT)")
+end
 
 
 
@@ -292,10 +306,14 @@ to go
       tree-dynamics]
   tick
   update-lists]
-  [;export-db ;; uncomment if want to output MySQL graph
-    ;if create-figures [rep-success-plot]
+  [export-db ;; uncomment if want to output MySQL graph
+    if create-figures [rep-success-plot]
     stop
-    output-data]
+    output-data
+    ;if export-tables [export-data]]
+    export-data2
+
+  ]
 end
 
 ;;;;;;;; OUTPUT LISTS ;;;;;;;;;;;;;;;
@@ -315,36 +333,72 @@ to output-data
   set poly-males-output polygynous-males
   set roaming-males-output roaming-males 
 end
+  
+
+  
+  
+to export-data2 
+;set-current-directory user-directory
+;; create the column headings once 
+if ticks = stop-ticks [ ;[create-files] 
+file-open user-new-file]
+end 
+
+to create-files 
+;; create the file and give the first row column headings 
+;export-output "sire-offspring.csv"
+let spacer "," 
+file-open "sire_offspring.csv" 
+file-print (list "who" spacer "rank" spacer "offspring" )
+file-close 
+end 
+
+to export-files 
+;; write the information to the file 
+let spacer "," 
+file-open "Sample Output.csv" 
+ask males [
+  let offspring length offspring-sired
+  file-print (list who spacer rank spacer offspring)] 
+file-close 
+end 
+  
+;    foreach sort-on [rank] males [
+;      ask ? [
+;     show (word rank "," offspring-sired)
+;    ]
+;    ]
+  
 
 
 ;;;;;;; EXPORT DATABASE TO SQL ;;;;;;;;;;
 
 
-;to export-db
-;  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
-;    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
-;  ask males [
-;    let male-rank rank
-;    let num-offspring length offspring-sired
-;  sql:exec-direct (word "INSERT INTO " table-name1 " (male_rank, number_offspring) VALUES (" male-rank " ," num-offspring ")")]
-;end
+to export-db
+  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
+    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
+  ask males [
+    let male-rank rank
+    let num-offspring length offspring-sired
+  sql:exec-direct (word "INSERT INTO " table-name1 " (male_rank, number_offspring) VALUES (" male-rank " ," num-offspring ")")]
+end
 
-;to rep-success-plot
-;  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
-;    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
-;  sql:exec-direct (word "SELECT `number_offspring` FROM " table-name1)
-;  let offspring sql:fetch-resultset
-;  sql:exec-direct (word "SELECT `male_rank` FROM " table-name1)
-;  let sires sql:fetch-resultset
-;  (r:put "sires" sires)
-;  (r:eval "b<-as.vector(sires)")
-;  (r:put "offspring" offspring)
-;  (r:eval "a<- as.vector(offspring)")
-;  (r:eval "df<-as.data.frame(cbind(b,a))")
-;  (r:eval "order.df<-df[order(as.numeric(df$b)) , ]")
-;  (r:eval "barplot(as.integer(order.df[,2]), names.arg = as.character(order.df$b), xlab = 'Male rank', ylab = 'Number of offspring sired', col = 'blue', main = 'Male reproductive success according to dominance rank')")
-;
-;end 
+to rep-success-plot
+  sql:configure "defaultconnection" [["host" "localhost"] ["port" 3306] 
+    ["user" "root"] ["password" "root"] ["database" "PTM_output"] ["autodisconnect" "on"]]
+  sql:exec-direct (word "SELECT `number_offspring` FROM " table-name1)
+  let offspring sql:fetch-resultset
+  sql:exec-direct (word "SELECT `male_rank` FROM " table-name1)
+  let sires sql:fetch-resultset
+  (r:put "sires" sires)
+  (r:eval "b<-as.vector(sires)")
+  (r:put "offspring" offspring)
+  (r:eval "a<- as.vector(offspring)")
+  (r:eval "df<-as.data.frame(cbind(b,a))")
+  (r:eval "order.df<-df[order(as.numeric(df$b)) , ]")
+  (r:eval "barplot(as.integer(order.df[,2]), names.arg = as.character(order.df$b), xlab = 'Male rank', ylab = 'Number of offspring sired', col = 'blue', main = 'Male reproductive success according to dominance rank')")
+
+end 
  
   
 ;;;;;;;; CHECK VARIABLES ;;;;;;;;
@@ -588,7 +642,7 @@ initial-females
 initial-females
 0
 100
-12
+25
 1
 1
 NIL
@@ -657,7 +711,7 @@ female-min-resources
 female-min-resources
 0
 50
-25
+10
 1
 1
 NIL
@@ -807,7 +861,7 @@ SWITCH
 455
 create-figures
 create-figures
-1
+0
 1
 -1000
 
@@ -832,7 +886,7 @@ INPUTBOX
 1062
 419
 table-name2
-NIL
+sire_offspring_simulations
 1
 0
 String
@@ -861,7 +915,7 @@ total-trees
 total-trees
 0
 500
-150
+240
 10
 1
 NIL
@@ -885,7 +939,18 @@ CHOOSER
 distribution
 distribution
 "uniform" "clumped" "random" 1 2 3
-0
+5
+
+SWITCH
+828
+462
+970
+495
+export-tables
+export-tables
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1240,6 +1305,77 @@ NetLogo 5.0.5
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="sire-offspring" repetitions="1" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>foreach sort-on [rank] males [</metric>
+    <metric>ask ? [</metric>
+    <metric>print (word rank "," length offspring-sired)]</metric>
+    <metric>]</metric>
+    <enumeratedValueSet variable="initial-males">
+      <value value="24"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="distribution">
+      <value value="1"/>
+      <value value="2"/>
+      <value value="3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="male-min-resources">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="distance-trees">
+      <value value="0.25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="x-num-territories">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="regeneration-time">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="female-min-resources">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="age-of-dispersal">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="stop-ticks">
+      <value value="1000"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="prob-subordinate-win">
+      <value value="0.2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="create-figures">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="total-trees">
+      <value value="50"/>
+      <value value="50"/>
+      <value value="500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="table-name1">
+      <value value="&quot;PTM_offspring&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cost-offspring">
+      <value value="20"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-females">
+      <value value="25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="table-name2">
+      <value value="&quot;&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="y-num-territories">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="energy-to-reproduce">
+      <value value="80"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="export-tables">
+      <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
